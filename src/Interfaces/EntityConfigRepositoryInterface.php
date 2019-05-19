@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Interfaces;
 
-use CodeFoundation\Entity\EntityIdentifier;
-
 /**
  * Defines contract for config repositories for entities.
  *
@@ -17,7 +15,7 @@ interface EntityConfigRepositoryInterface
     /**
      * Get the config value defined by $key.
      *
-     * @param \CodeFoundation\Entity\EntityIdentifier $entity
+     * @param EntityIdentifier $entity
      *   Entity to retrieve the configuration value for, if available.
      * @param string                                  $key
      *   Configuration key string.
@@ -32,7 +30,7 @@ interface EntityConfigRepositoryInterface
     /**
      * Sets a config value in this repository.
      *
-     * @param \CodeFoundation\Entity\EntityIdentifier      $entity
+     * @param EntityIdentifier      $entity
      *   An optional entity to associate with $key.
      *
      * @param string                                       $key

@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Repository;
 
-use CodeFoundation\Entity\EntityIdentifier;
-use CodeFoundation\Entity\EntityConfigItem;
 use CodeFoundation\FlowConfig\Interfaces\EntityConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\EntityIdentifier;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -46,7 +45,7 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
     /**
      * Sets a config value in this repository.
      *
-     * @param \CodeFoundation\Entity\EntityIdentifier $entity
+     * @param EntityIdentifier $entity
      *   An optional entity to associate with $key.
      * @param string                                  $key
      *   The configuration items key.
@@ -84,7 +83,7 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
     /**
      * Get the config value defined by $key.
      *
-     * @param \CodeFoundation\Entity\EntityIdentifier $entity
+     * @param EntityIdentifier $entity
      *   Entity to retrieve the configuration value for, if available.
      *
      * @param string                                  $key

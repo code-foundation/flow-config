@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Repository;
 
-use CodeFoundation\FlowConfig\ConfigRepositoryInterface;
-use CodeFoundation\FlowConfig\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Interfaces\CompositeConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\ConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Interfaces\EntityIdentifier;
-use CodeFoundation\FlowConfig\ReadonlyConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\ReadonlyConfigRepositoryInterface;
 
 class CascadeConfig implements CompositeConfigRepositoryInterface
 {
@@ -89,7 +89,7 @@ class CascadeConfig implements CompositeConfigRepositoryInterface
     /**
      * Get the config value defined by $key.
      *
-     * @param \CodeFoundation\Entity\EntityIdentifier $entity
+     * @param EntityIdentifier $entity
      *   Entity to retrieve the configuration value for, if available.
      * @param string                                  $key
      *   Configuration key string.
@@ -121,7 +121,7 @@ class CascadeConfig implements CompositeConfigRepositoryInterface
     /**
      * Sets a config value in this repository.
      *
-     * @param \CodeFoundation\Entity\EntityIdentifier $entity
+     * @param EntityIdentifier $entity
      *   An optional entity to associate with $key.
      * @param string                                  $key
      *   The configuration items key.
