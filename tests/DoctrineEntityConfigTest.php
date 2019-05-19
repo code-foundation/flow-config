@@ -2,7 +2,7 @@
 
 namespace CodeFoundation\FlowConfig\Tests;
 
-use CodeFoundation\FlowConfig\DoctrineEntityConfig;
+use CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
 use CodeFoundation\FlowConfig\EntityConfigRepositoryInterface;
 use CodeFoundation\Entity\EntityConfigItem;
 use CodeFoundation\Entity\Person;
@@ -13,9 +13,9 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
- * Tests for CodeFoundation\FlowConfig\DoctrineEntityConfig;
+ * Tests for CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
  *
- * @covers DoctrineEntityConfig
+ * @covers \CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig
  */
 class DoctrineEntityConfigTest extends KernelTestCase
 {

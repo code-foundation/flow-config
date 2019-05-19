@@ -1,10 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace CodeFoundation\FlowConfig;
+namespace CodeFoundation\FlowConfig\Repository;
 
+use CodeFoundation\FlowConfig\ConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Interfaces\CompositeConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Interfaces\EntityIdentifier;
+use CodeFoundation\FlowConfig\ReadonlyConfigRepositoryInterface;
 
 class CascadeConfig implements CompositeConfigRepositoryInterface
 {

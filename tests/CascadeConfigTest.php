@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Tests;
 
-use CodeFoundation\FlowConfig\CascadeConfig;
+use CodeFoundation\FlowConfig\Repository\CascadeConfig;
 use CodeFoundation\FlowConfig\CompositeConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\ConfigRepositoryInterface;
-use CodeFoundation\FlowConfig\DoctrineConfig;
-use CodeFoundation\FlowConfig\DoctrineEntityConfig;
+use CodeFoundation\FlowConfig\Repository\DoctrineConfig;
+use CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
 use CodeFoundation\FlowConfig\EntityConfigRepositoryInterface;
-use CodeFoundation\FlowConfig\ReadonlyConfig;
+use CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
 use CodeFoundation\Entity\ConfigItem;
 use CodeFoundation\Entity\EntityConfigItem;
 use CodeFoundation\Entity\Person;
@@ -20,9 +20,9 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
- * Tests for CodeFoundation\FlowConfig\CascadeConfig class.
+ * Tests for CodeFoundation\FlowConfig\Repository\CascadeConfig class.
  *
- * @covers CascadeConfig
+ * @covers \CodeFoundation\FlowConfig\Repository\CascadeConfig
  *
  * @Incom
  */

@@ -3,7 +3,7 @@
 namespace CodeFoundation\FlowConfig\Tests;
 
 use CodeFoundation\FlowConfig\ConfigRepositoryInterface;
-use CodeFoundation\FlowConfig\DoctrineConfig;
+use CodeFoundation\FlowConfig\Repository\DoctrineConfig;
 use CodeFoundation\Entity\ConfigItem;
 
 use CodeFoundation\FlowConfig\Tests\DbSetup;
@@ -11,9 +11,9 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
- * Tests for CodeFoundation\FlowConfig\DoctrineConfig;
+ * Tests for CodeFoundation\FlowConfig\Repository\DoctrineConfig;
  *
- * @covers DoctrineConfig
+ * @covers \CodeFoundation\FlowConfig\Repository\DoctrineConfig
  */
 class DoctrineConfigTest extends KernelTestCase
 {

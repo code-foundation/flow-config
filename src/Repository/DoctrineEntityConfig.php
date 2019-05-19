@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace CodeFoundation\FlowConfig;
+namespace CodeFoundation\FlowConfig\Repository;
 
 use CodeFoundation\Entity\EntityIdentifier;
 use CodeFoundation\Entity\EntityConfigItem;

@@ -3,10 +3,10 @@
 namespace CodeFoundation\FlowConfig\Tests;
 
 use CodeFoundation\FlowConfig\Interfaces\ReadonlyConfigRepositoryInterface;
-use CodeFoundation\FlowConfig\ReadonlyConfig;
+use CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
 
 /**
- * Tests for CodeFoundation\FlowConfig\ReadonlyConfig;
+ * Tests for CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
  *
  * @covers ReadonlyConfig
  */
