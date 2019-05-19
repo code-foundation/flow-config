@@ -1,0 +1,15 @@
+{
+    "require-dev": {
+        "phpunit/phpunit": "^7"
+    },
+    "autoload": {
+        "psr-4": {
+            "CodeFoundation\\FlowConfig\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CodeFoundation\\FlowConfig\\Tests\\": "tests/"
+        }
+    }
+}
