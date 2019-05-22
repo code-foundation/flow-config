@@ -11,5 +11,8 @@
         "psr-4": {
             "CodeFoundation\\FlowConfig\\Tests\\": "tests/"
         }
+    },
+    "require": {
+        "doctrine/orm": "^2.6"
     }
 }
