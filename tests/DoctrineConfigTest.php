@@ -2,65 +2,30 @@
 
 namespace CodeFoundation\FlowConfig\Tests;
 
-use CodeFoundation\FlowConfig\ConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\ConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\DoctrineConfig;
-use CodeFoundation\Entity\ConfigItem;
-
-use CodeFoundation\FlowConfig\Tests\DbSetup;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
 
 /**
  * Tests for CodeFoundation\FlowConfig\Repository\DoctrineConfig;
  *
  * @covers \CodeFoundation\FlowConfig\Repository\DoctrineConfig
  */
-class DoctrineConfigTest extends KernelTestCase
+class DoctrineConfigTest extends DatabaseTestCase
 {
-    use DbSetup;
-
-    /**
-     * @var EntityManager;
-     */
-    private $em;
-
-    /**
-     * Build a temporary sqlite database for unit testing.
-     */
-    public function setUp()
-    {
-        self::bootKernel();
-        $this->em = $this->buildTestDatabase(
-            self::$container,
-            '/tmp/test.sqlite',
-            [ConfigItem::class]
-        );
-
-        parent::setUp();
-    }
-
-    /**
-     * Delete the temporary sqlite database.
-     */
-    public function tearDown()
-    {
-        $this->destroyTestDatabase('/tmp/test.sqlite');
-        parent::tearDown();
-    }
-
     /**
      * Enforce setting expected responses from DoctrineConfig.
      */
     public function testClassStructure()
     {
-        $config = new DoctrineConfig($this->em);
+        $config = new DoctrineConfig($this->getEntityManager());
         $this->assertInstanceOf(ConfigRepositoryInterface::class, $config);
         $this->assertTrue($config->canSet());
     }
 
     public function testBasicSetGet()
     {
-        $config = new DoctrineConfig($this->em);
+        $config = new DoctrineConfig($this->getEntityManager());
 
         $config->set('somekey', 'somevalue');
 
@@ -77,7 +42,7 @@ class DoctrineConfigTest extends KernelTestCase
         $expected1 = 'abc';
         $expected2 = null;
 
-        $config = new DoctrineConfig($this->em);
+        $config = new DoctrineConfig($this->getEntityManager());
         $config->set('key1', 'abc');
 
         $actual1 = $config->get('key1', 'ignoreddefault');
@@ -94,10 +59,10 @@ class DoctrineConfigTest extends KernelTestCase
     {
         $expected = 'abc';
 
-        $config = new DoctrineConfig($this->em);
+        $config = new DoctrineConfig($this->getEntityManager());
         $config->set('akey', 'abc');
 
-        $config = new DoctrineConfig($this->em);
+        $config = new DoctrineConfig($this->getEntityManager());
         $actual = $config->get('akey');
 
         $this->assertEquals($expected, $actual);
@@ -109,10 +74,10 @@ class DoctrineConfigTest extends KernelTestCase
     {
         $expected = '';
 
-        $config = new DoctrineConfig($this->em);
+        $config = new DoctrineConfig($this->getEntityManager());
         $config->set('akey', '');
 
-        $config = new DoctrineConfig($this->em);
+        $config = new DoctrineConfig($this->getEntityManager());
         $actual = $config->get('akey');
 
         $this->assertEquals($expected, $actual);

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Repository;
 
+use CodeFoundation\FlowConfig\Entity\ConfigItem;
 use CodeFoundation\FlowConfig\Interfaces\ConfigRepositoryInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
