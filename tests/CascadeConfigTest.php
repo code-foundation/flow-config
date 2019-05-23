@@ -3,60 +3,27 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Tests;
 
+use CodeFoundation\FlowConfig\Entity\ConfigItem;
+use CodeFoundation\FlowConfig\Entity\EntityConfigItem;
 use CodeFoundation\FlowConfig\Repository\CascadeConfig;
-use CodeFoundation\FlowConfig\CompositeConfigRepositoryInterface;
-use CodeFoundation\FlowConfig\ConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\CompositeConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\ConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\DoctrineConfig;
 use CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
-use CodeFoundation\FlowConfig\EntityConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
-use CodeFoundation\Entity\ConfigItem;
-use CodeFoundation\Entity\EntityConfigItem;
-use CodeFoundation\Entity\Person;
-use CodeFoundation\Entity\User;
-
-use CodeFoundation\FlowConfig\Tests\DbSetup;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
 
 /**
  * Tests for CodeFoundation\FlowConfig\Repository\CascadeConfig class.
  *
  * @covers \CodeFoundation\FlowConfig\Repository\CascadeConfig
- *
- * @Incom
  */
-class CascadeConfigTest extends KernelTestCase
+class CascadeConfigTest extends DatabaseTestCase
 {
-    use DbSetup;
-
-    /**
-     * @var EntityManager;
-     */
-    private $em;
-
-    /**
-     * Build a temporary sqlite database for unit testing.
-     */
-    public function setUp()
+    protected function getEntityList(): array
     {
-        self::bootKernel();
-        $this->em = $this->buildTestDatabase(
-            self::$container,
-            '/tmp/test.sqlite',
-            [EntityConfigItem::class, ConfigItem::class]
-        );
-
-        parent::setUp();
-    }
-
-    /**
-     * Delete the temporary sqlite database.
-     */
-    public function tearDown()
-    {
-        $this->destroyTestDatabase('/tmp/test.sqlite');
-        parent::tearDown();
+        return [EntityConfigItem::class, ConfigItem::class];
     }
 
     /**
@@ -75,8 +42,8 @@ class CascadeConfigTest extends KernelTestCase
             'defaultkey2' => 'defaultvalue2',
             'defaultkey3' => 'defaultvalue3',
         ]);
-        $systemConfig = new DoctrineConfig($this->em);
-        $entityConfig = new DoctrineEntityConfig($this->em);
+        $systemConfig = new DoctrineConfig($this->getEntityManager());
+        $entityConfig = new DoctrineEntityConfig($this->getEntityManager());
 
         $config = new CascadeConfig($roConfig, $systemConfig, $entityConfig);
 
