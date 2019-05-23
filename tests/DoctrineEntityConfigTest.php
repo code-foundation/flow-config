@@ -5,6 +5,7 @@ namespace CodeFoundation\FlowConfig\Tests;
 use CodeFoundation\FlowConfig\Entity\EntityConfigItem;
 use CodeFoundation\FlowConfig\Interfaces\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
+use CodeFoundation\FlowConfig\Tests\Stubs\EntityStub;
 use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
 
 /**
@@ -35,15 +36,9 @@ class DoctrineEntityConfigTest extends DatabaseTestCase
     public function testDefaultValuesAreReturned()
     {
         $expected = 'different';
-
         $config = new DoctrineEntityConfig($this->getEntityManager());
-
-        $person = new Person();
-        $person->setExternalUuid('lol');
-        $user = new User($person);
-
+        $user = new EntityStub('user', 'lol');
         $config->setByEntity($user, 'somekey', 'newuservalue');
-
         $configNew = new DoctrineEntityConfig($this->getEntityManager());
 
         $actualUserValue = $configNew->getByEntity(
@@ -61,15 +56,9 @@ class DoctrineEntityConfigTest extends DatabaseTestCase
     public function testSettingValuesIsSaved()
     {
         $expected = 'newuservalue';
-
         $config = new DoctrineEntityConfig($this->getEntityManager());
-
-        $person = new Person();
-        $person->setExternalUuid('lol');
-        $user = new User($person);
-
+        $user = new EntityStub('user', 'lol');
         $config->setByEntity($user, 'somekey', 'newuservalue');
-
         $configNew = new DoctrineEntityConfig($this->getEntityManager());
 
         $actual1 = $configNew->getByEntity($user, 'somekey', null);
