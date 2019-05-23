@@ -33,7 +33,7 @@ abstract class DatabaseTestCase extends TestCase
             )));
             $connectionParams = array(
                 'driver' => 'pdo_sqlite',
-                'path'   => '/tmp/test.db',
+                'path'   => ':memory:',
             );
 
             $this->entityManager = EntityManager::create($connectionParams, $config);
