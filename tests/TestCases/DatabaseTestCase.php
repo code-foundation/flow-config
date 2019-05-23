@@ -6,10 +6,11 @@ namespace CodeFoundation\FlowConfig\Tests\TestCases;
 use Doctrine\Common\Persistence\Mapping\Driver\DefaultFileLocator;
 use Doctrine\Common\Persistence\Mapping\Driver\PHPDriver;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use PHPUnit\Framework\TestCase;
 
-class DatabaseTestCase extends TestCase
+abstract class DatabaseTestCase extends TestCase
 {
     /**
      * @var \Doctrine\ORM\EntityManagerInterface;
@@ -20,12 +21,12 @@ class DatabaseTestCase extends TestCase
     {
         parent::setUp();
         $this->entityManager = $this->getEntityManager();
+        $this->buildSchema($this->getEntityList());
     }
 
-    function getEntityManager(): EntityManager
+    protected function getEntityManager(): EntityManager
     {
-        if ($this->entityManager === null)
-        {
+        if ($this->entityManager === null) {
             $config = Setup::createConfiguration(true, null, null);
             $config->setMetadataDriverImpl(new PHPDriver(new DefaultFileLocator(
                 dirname(dirname(__DIR__)) . '/src/Entity/DoctrineMaps/', '.php'
@@ -40,4 +41,17 @@ class DatabaseTestCase extends TestCase
 
         return $this->entityManager;
     }
+
+    private function buildSchema(array $entities): void
+    {
+        $entityManager = $this->getEntityManager();
+        $schemaTool = new SchemaTool($entityManager);
+        $classMetadataList = [];
+        foreach ($entities as $entity) {
+            $classMetadataList[] = $entityManager->getClassMetadata($entity);
+        }
+        $schemaTool->createSchema($classMetadataList);
+    }
+
+    abstract protected function getEntityList(): array;
 }

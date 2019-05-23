@@ -2,6 +2,7 @@
 
 namespace CodeFoundation\FlowConfig\Tests;
 
+use CodeFoundation\FlowConfig\Entity\ConfigItem;
 use CodeFoundation\FlowConfig\Interfaces\ConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\DoctrineConfig;
 use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
@@ -13,6 +14,10 @@ use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
  */
 class DoctrineConfigTest extends DatabaseTestCase
 {
+    protected function getEntityList(): array {
+        return [ConfigItem::class];
+    }
+
     /**
      * Enforce setting expected responses from DoctrineConfig.
      */
