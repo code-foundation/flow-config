@@ -12,6 +12,7 @@ use CodeFoundation\FlowConfig\Repository\DoctrineConfig;
 use CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
 use CodeFoundation\FlowConfig\Interfaces\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
+use CodeFoundation\FlowConfig\Tests\Stubs\EntityStub;
 use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
 
 /**
@@ -144,13 +145,8 @@ class CascadeConfigTest extends DatabaseTestCase
     public function testUserSettingValues()
     {
         $expected = 'abc';
-
         $config = $this->buildCascadeConfig();
-
-        $person = new Person();
-        $person->setExternalUuid('abc');
-        $user = new User($person);
-
+        $user = new EntityStub('user', 'abc');
         $config->setByEntity($user, 'somekey', 'abc');
 
         $config2 = $this->buildCascadeConfig();
@@ -166,12 +162,9 @@ class CascadeConfigTest extends DatabaseTestCase
     public function testEntityValuesCascadeToRoConfig()
     {
         $expected = 'defaultvalue2';
-
         $config = $this->buildCascadeConfig();
 
-        $person = new Person();
-        $person->setExternalUuid('aah');
-        $user = new User($person);
+        $user = new EntityStub('user', 'aah');
 
         $config2 = $this->buildCascadeConfig();
         $actual = $config2->getByEntity($user, 'defaultkey2', null);
@@ -190,9 +183,7 @@ class CascadeConfigTest extends DatabaseTestCase
         $config = $this->buildCascadeConfig();
         $config->set('defaultkey3', 'newvalue');
 
-        $person = new Person();
-        $person->setExternalUuid('aah');
-        $user = new User($person);
+        $user = new EntityStub('user', 'aah');
 
         $config2 = $this->buildCascadeConfig();
         $actual = $config2->getByEntity($user, 'defaultkey3', null);
@@ -210,9 +201,7 @@ class CascadeConfigTest extends DatabaseTestCase
 
         $config = $this->buildCascadeConfig();
 
-        $person = new Person();
-        $person->setExternalUuid('hoho');
-        $user = new User($person);
+        $user = new EntityStub('user', 'hoho');
 
         $actual = $config->getByEntity($user, 'defaultkey3', 'defaultvalueabc');
 
