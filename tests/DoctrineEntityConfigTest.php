@@ -2,52 +2,21 @@
 
 namespace CodeFoundation\FlowConfig\Tests;
 
+use CodeFoundation\FlowConfig\Entity\EntityConfigItem;
+use CodeFoundation\FlowConfig\Interfaces\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
-use CodeFoundation\FlowConfig\EntityConfigRepositoryInterface;
-use CodeFoundation\Entity\EntityConfigItem;
-use CodeFoundation\Entity\Person;
-use CodeFoundation\Entity\User;
-
-use CodeFoundation\FlowConfig\Tests\DbSetup;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
 
 /**
  * Tests for CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
  *
  * @covers \CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig
  */
-class DoctrineEntityConfigTest extends KernelTestCase
+class DoctrineEntityConfigTest extends DatabaseTestCase
 {
-    use DbSetup;
-
-    /**
-     * @var EntityManager;
-     */
-    private $em;
-
-    /**
-     * Build a temporary sqlite database for unit testing.
-     */
-    public function setUp()
+    protected function getEntityList(): array
     {
-        self::bootKernel();
-        $this->em = $this->buildTestDatabase(
-            self::$container,
-            '/tmp/test.sqlite',
-            [EntityConfigItem::class]
-        );
-
-        parent::setUp();
-    }
-
-    /**
-     * Delete the temporary sqlite database.
-     */
-    public function tearDown()
-    {
-        $this->destroyTestDatabase('/tmp/test.sqlite');
-        parent::tearDown();
+        return [EntityConfigItem::class];
     }
 
     /**
@@ -55,7 +24,7 @@ class DoctrineEntityConfigTest extends KernelTestCase
      */
     public function testClassStructure()
     {
-        $config = new DoctrineEntityConfig($this->em);
+        $config = new DoctrineEntityConfig($this->getEntityManager());
         $this->assertInstanceOf(EntityConfigRepositoryInterface::class, $config);
         $this->assertTrue($config->canSetByEntity());
     }
@@ -67,7 +36,7 @@ class DoctrineEntityConfigTest extends KernelTestCase
     {
         $expected = 'different';
 
-        $config = new DoctrineEntityConfig($this->em);
+        $config = new DoctrineEntityConfig($this->getEntityManager());
 
         $person = new Person();
         $person->setExternalUuid('lol');
@@ -75,7 +44,7 @@ class DoctrineEntityConfigTest extends KernelTestCase
 
         $config->setByEntity($user, 'somekey', 'newuservalue');
 
-        $configNew = new DoctrineEntityConfig($this->em);
+        $configNew = new DoctrineEntityConfig($this->getEntityManager());
 
         $actualUserValue = $configNew->getByEntity(
             $user,
@@ -93,7 +62,7 @@ class DoctrineEntityConfigTest extends KernelTestCase
     {
         $expected = 'newuservalue';
 
-        $config = new DoctrineEntityConfig($this->em);
+        $config = new DoctrineEntityConfig($this->getEntityManager());
 
         $person = new Person();
         $person->setExternalUuid('lol');
@@ -101,7 +70,7 @@ class DoctrineEntityConfigTest extends KernelTestCase
 
         $config->setByEntity($user, 'somekey', 'newuservalue');
 
-        $configNew = new DoctrineEntityConfig($this->em);
+        $configNew = new DoctrineEntityConfig($this->getEntityManager());
 
         $actual1 = $configNew->getByEntity($user, 'somekey', null);
         $actual2 = $configNew->getByEntity($user, 'somekey', 'default');
