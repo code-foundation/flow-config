@@ -1,0 +1,9 @@
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PSR2" xsi:noNamespaceSchemaLocation="../../../phpcs.xsd">
+    <description>Standard PSR-2 coding standards.</description>
+    <arg name="tab-width" value="4"/>
+    <rule ref="PSR1"/>
+    <rule ref="PSR2"/>
+    <file>src</file>
+    <file>tests</file>
+</ruleset>
+
