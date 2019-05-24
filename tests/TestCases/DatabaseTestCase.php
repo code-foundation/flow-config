@@ -28,9 +28,9 @@ abstract class DatabaseTestCase extends TestCase
     {
         if ($this->entityManager === null) {
             $config = Setup::createConfiguration(true, null, null);
-            $config->setMetadataDriverImpl(new PHPDriver(new DefaultFileLocator(
-                dirname(dirname(__DIR__)) . '/src/Entity/DoctrineMaps/', '.php'
-            )));
+            $config->setMetadataDriverImpl(new PHPDriver(
+                new DefaultFileLocator(dirname(dirname(__DIR__)) . '/src/Entity/DoctrineMaps/', '.php')
+            ));
             $connectionParams = array(
                 'driver' => 'pdo_sqlite',
                 'path'   => ':memory:',

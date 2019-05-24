@@ -14,7 +14,8 @@ use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
  */
 class DoctrineConfigTest extends DatabaseTestCase
 {
-    protected function getEntityList(): array {
+    protected function getEntityList(): array
+    {
         return [ConfigItem::class];
     }
 

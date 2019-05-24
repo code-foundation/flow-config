@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Tests\Stubs;
 
-
 use CodeFoundation\FlowConfig\Interfaces\EntityIdentifier;
 
 class EntityStub implements EntityIdentifier
