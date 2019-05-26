@@ -1,3 +1,7 @@
+# Status
+
+[![Latest Stable Version](https://poser.pugx.org/code-foundation/flow-config/v/stable)](https://packagist.org/packages/code-foundation/flow-config) [![License](https://poser.pugx.org/code-foundation/flow-config/license)](https://packagist.org/packages/code-foundation/flow-config)
+
 [![CircleCI](https://circleci.com/gh/code-foundation/flow-config.svg?style=svg)](https://circleci.com/gh/code-foundation/flow-config)
 
 # Introduction
