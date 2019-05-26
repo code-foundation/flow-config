@@ -1,4 +1,17 @@
 {
+    "name": "code-foundation/flow-config",
+    "description": "Cascading key/value configuration of preferences for platforms, installs, and users.",
+    "type": "library",
+    "keywords": ["config", "configuration", "users", "entities"],
+    "homepage": "https://github.com/code-foundation/flow-config",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Edward Murrell",
+            "email": "edward.murrell@codefoundation.com.au",
+            "homepage": "https://codefoundation.com.au"
+        }
+    ],
     "require-dev": {
         "phpunit/phpunit": "^7",
         "squizlabs/php_codesniffer": "*"
@@ -14,6 +27,7 @@
         }
     },
     "require": {
+        "php": ">=7.1.0",
         "doctrine/orm": "^2.6"
     }
 }
