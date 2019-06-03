@@ -29,7 +29,7 @@ abstract class DatabaseTestCase extends TestCase
         if ($this->entityManager === null) {
             $config = Setup::createConfiguration(true, null, null);
             $config->setMetadataDriverImpl(new XmlDriver(
-                new DefaultFileLocator(dirname(dirname(__DIR__)) . '/src/Entity/DoctrineMaps/', '.php')
+                new DefaultFileLocator(dirname(dirname(__DIR__)) . '/src/Entity/DoctrineMaps/', '.orm.xml')
             ));
             $connectionParams = array(
                 'driver' => 'pdo_sqlite',
