@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace CodeFoundation\FlowConfig\Tests\TestCases;
 
 use Doctrine\Common\Persistence\Mapping\Driver\DefaultFileLocator;
-use Doctrine\Common\Persistence\Mapping\Driver\PHPDriver;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +28,7 @@ abstract class DatabaseTestCase extends TestCase
     {
         if ($this->entityManager === null) {
             $config = Setup::createConfiguration(true, null, null);
-            $config->setMetadataDriverImpl(new PHPDriver(
+            $config->setMetadataDriverImpl(new XmlDriver(
                 new DefaultFileLocator(dirname(dirname(__DIR__)) . '/src/Entity/DoctrineMaps/', '.php')
             ));
             $connectionParams = array(
