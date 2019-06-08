@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Tests\TestCases;
 
+use CodeFoundation\FlowConfig\Config\DoctrineEntityManagerBuilder;
 use Doctrine\Common\Persistence\Mapping\Driver\DefaultFileLocator;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
@@ -24,24 +25,28 @@ abstract class DatabaseTestCase extends TestCase
         $this->buildSchema($this->getEntityList());
     }
 
+    /**
+     * Build the a Doctrine Configuration map.
+     *
+     * @return \Doctrine\ORM\EntityManager
+     */
     protected function getEntityManager(): EntityManager
     {
         if ($this->entityManager === null) {
-            $config = Setup::createConfiguration(true, null, null);
-            $config->setMetadataDriverImpl(new XmlDriver(
-                new DefaultFileLocator(dirname(dirname(__DIR__)) . '/src/Entity/DoctrineMaps/', '.orm.xml')
-            ));
-            $connectionParams = array(
-                'driver' => 'pdo_sqlite',
-                'path'   => ':memory:',
-            );
+            $connection = ['driver' => 'pdo_sqlite', 'path'   => ':memory:'];
 
-            $this->entityManager = EntityManager::create($connectionParams, $config);
+            $config = DoctrineEntityManagerBuilder::getDoctrineConfig();
+            $this->entityManager = DoctrineEntityManagerBuilder::getEntityManager($connection, $config);
         }
 
         return $this->entityManager;
     }
 
+    /**
+     * Create schema for passed in entities.
+     *
+     * @param array $entities List of entity classe paths.
+     */
     private function buildSchema(array $entities): void
     {
         $entityManager = $this->getEntityManager();
