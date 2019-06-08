@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="CodeFoundation\FlowConfig\Entity\EntityConfigItem" table="flowconfig_entityconfigitem">
+
+        <indexes>
+            <index name="keys_combo_idx" columns="key,entityType,entityId"/>
+        </indexes>
+
+        <id name="key" type="string"><generator strategy="NONE"/></id>
+        <id name="entityType" type="string"><generator strategy="NONE"/></id>
+        <id name="entityId" type="string"><generator strategy="NONE"/></id>
+        <field name="value" column="value" type="string" nullable="true" unique="false" />
+
+    </entity>
+
+</doctrine-mapping>
