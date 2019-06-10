@@ -6,12 +6,12 @@
     <entity name="CodeFoundation\FlowConfig\Entity\EntityConfigItem" table="flowconfig_entityconfigitem">
 
         <indexes>
-            <index name="keys_combo_idx" columns="key,entityType,entityId"/>
+            <index name="keys_combo_idx" columns="key,entity_type,entity_id"/>
         </indexes>
 
-        <id name="key" type="string"><generator strategy="NONE"/></id>
-        <id name="entityType" type="string"><generator strategy="NONE"/></id>
-        <id name="entityId" type="string"><generator strategy="NONE"/></id>
+        <id name="key" column="key" type="string"><generator strategy="NONE"/></id>
+        <id name="entityType" column="entity_type" type="string"><generator strategy="NONE"/></id>
+        <id name="entityId" column="entity_id" type="string"><generator strategy="NONE"/></id>
         <field name="value" column="value" type="string" nullable="true" unique="false" />
 
     </entity>
