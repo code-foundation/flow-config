@@ -8,7 +8,7 @@ use CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
 /**
  * Tests for CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
  *
- * @covers ReadonlyConfig
+ * @covers \CodeFoundation\FlowConfig\Repository\ReadonlyConfig
  */
 class ReadonlyConfigTest extends \PHPUnit\Framework\TestCase
 {
