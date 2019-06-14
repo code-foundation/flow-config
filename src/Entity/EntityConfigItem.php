@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Entity;
 
+use CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException;
+
 class EntityConfigItem
 {
     /**
@@ -47,9 +49,14 @@ class EntityConfigItem
 
     /**
      * @param string $key
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
      */
     public function setKey(string $key)
     {
+        if ($this->key !== null) {
+            throw new EntityKeyChangeException();
+        }
         $this->key = $key;
     }
 
@@ -79,9 +86,14 @@ class EntityConfigItem
 
     /**
      * @param null|string $entityType
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
      */
     public function setEntityType($entityType)
     {
+        if ($this->entityType !== null) {
+            throw new EntityKeyChangeException();
+        }
         $this->entityType = $entityType;
     }
 
@@ -95,9 +107,14 @@ class EntityConfigItem
 
     /**
      * @param null|string $entityId
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
      */
     public function setEntityId($entityId)
     {
+        if ($this->entityId !== null) {
+            throw new EntityKeyChangeException();
+        }
         $this->entityId = $entityId;
     }
 }
