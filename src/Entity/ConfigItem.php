@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Entity;
 
+use CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException;
+
 class ConfigItem
 {
     /**
@@ -29,9 +31,14 @@ class ConfigItem
 
     /**
      * @param string $key
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
      */
     public function setKey(string $key)
     {
+        if ($this->key !== null) {
+            throw new EntityKeyChangeException();
+        }
         $this->key = $key;
     }
 
