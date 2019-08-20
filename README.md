@@ -55,6 +55,16 @@ $entityConfig = new DoctrineEntityConfig($this->getEntityManager());
 $cascadeConfig = new CascadeConfig($baseConfig, $systemConfig, $entityConfig);
 ```
 
+If you don't want the Config services to automatically flush changes to the database, pass a false for `$autoFlush` in
+ the constructor of the service.
+
+```php
+$systemConfig = new DoctrineConfig($this->getEntityManager(), false);
+
+$entityConfig = new DoctrineEntityConfig($this->getEntityManager(), false);
+```
+
+
 ## Examples
 
 ```php
@@ -90,7 +100,6 @@ echo $cascadeConfig->getEntityConfigItem('timezone', $user2); // 'Australia/Melb
 * Validation
 * Allowed values
 * Factories
-* Configurable flush configuration
 * Eloquent backend
 
 # Contact
