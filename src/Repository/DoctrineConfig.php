@@ -39,14 +39,14 @@ class DoctrineConfig implements ConfigRepositoryInterface
      *
      * @param EntityManagerInterface $entityManager
      *   Doctrine EntityManager that can store and retrieve EntityConfigItem.
-     * @param bool|null $autoFlush
+     * @param bool $autoFlush
      *   Set to false if you don't want the setter to flush the config value. Defaults to true.
      */
-    public function __construct(EntityManagerInterface $entityManager, ?bool $autoFlush = null)
+    public function __construct(EntityManagerInterface $entityManager, bool $autoFlush = true)
     {
         $this->entityManager = $entityManager;
         $this->configRepository = $this->entityManager->getRepository(ConfigItem::class);
-        $this->autoFlush = $autoFlush ?? true;
+        $this->autoFlush = $autoFlush;
     }
 
     /**
