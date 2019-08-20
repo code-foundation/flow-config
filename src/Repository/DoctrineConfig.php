@@ -14,6 +14,13 @@ use Doctrine\ORM\EntityManagerInterface;
 class DoctrineConfig implements ConfigRepositoryInterface
 {
     /**
+     * If the setter should auto flush the config.
+     *
+     * @var bool
+     */
+    private $autoFlush;
+
+    /**
      * EntityManager that stores EntityConfigItems.
      *
      * @var EntityManager
@@ -32,11 +39,14 @@ class DoctrineConfig implements ConfigRepositoryInterface
      *
      * @param EntityManagerInterface $entityManager
      *   Doctrine EntityManager that can store and retrieve EntityConfigItem.
+     * @param bool|null $autoFlush
+     *   Set to false if you don't want the setter to flush the config value. Defaults to true.
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, ?bool $autoFlush = null)
     {
         $this->entityManager = $entityManager;
         $this->configRepository = $this->entityManager->getRepository(ConfigItem::class);
+        $this->autoFlush = $autoFlush ?? true;
     }
 
     /**
@@ -60,7 +70,10 @@ class DoctrineConfig implements ConfigRepositoryInterface
         }
 
         $this->entityManager->persist($configItem);
-        $this->entityManager->flush();
+
+        if ($this->autoFlush === true) {
+            $this->entityManager->flush();
+        }
     }
 
     /**
