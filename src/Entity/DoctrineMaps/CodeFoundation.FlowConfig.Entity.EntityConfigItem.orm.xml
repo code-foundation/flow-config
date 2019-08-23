@@ -9,9 +9,15 @@
             <index name="keys_combo_idx" columns="key,entity_type,entity_id"/>
         </indexes>
 
-        <id name="key" column="key" type="string"><generator strategy="NONE"/></id>
-        <id name="entityType" column="entity_type" type="string"><generator strategy="NONE"/></id>
-        <id name="entityId" column="entity_id" type="string"><generator strategy="NONE"/></id>
+        <!--
+            Indexed column is restricted to a maximum length of 191 characters because MySQL Innodb engine (with
+            utf8mb4 encoding) would not allow index key prefix length of more than 767 bytes.
+
+            Refer https://dev.mysql.com/doc/refman/5.6/en/innodb-restrictions.html
+        -->
+        <id name="key" column="key" type="string" length="64"><generator strategy="NONE"/></id>
+        <id name="entityType" column="entity_type" type="string" length="191"><generator strategy="NONE"/></id>
+        <id name="entityId" column="entity_id" type="string" length="64"><generator strategy="NONE"/></id>
         <field name="value" column="value" type="string" nullable="true" unique="false" />
 
     </entity>
