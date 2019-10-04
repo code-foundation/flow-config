@@ -3,7 +3,11 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Repository;
 
+use CodeFoundation\FlowConfig\Accessibility\NullAccessibility;
 use CodeFoundation\FlowConfig\Entity\EntityConfigItem;
+use CodeFoundation\FlowConfig\Exceptions\ValueGetException;
+use CodeFoundation\FlowConfig\Exceptions\ValueSetException;
+use CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface;
 use CodeFoundation\FlowConfig\Interfaces\EntityIdentifier;
 use CodeFoundation\FlowConfig\Interfaces\Repository\EntityConfigRepositoryInterface;
 use Doctrine\ORM\EntityManager;
@@ -17,6 +21,13 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class DoctrineEntityConfig implements EntityConfigRepositoryInterface
 {
+    /**
+     * The accessibility instance used to determine readability and writability of keys.
+     *
+     * @var \CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface|null
+     */
+    private $accessibility;
+
     /**
      * If the setter should auto flush the config.
      *
@@ -41,16 +52,22 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
     /**
      * DoctrineEntityConfig constructor.
      *
-     * @param EntityManager $entityManager
+     * @param \Doctrine\ORM\EntityManagerInterface $entityManager
      *   Doctrine EntityManager that can store and retrieve EntityConfigItem.
      * @param bool $autoFlush
      *   Set to false if you don't want the setter to flush the config value. Defaults to true.
+     * @param AccessibilityInterface $accessibility
+     *   The accessibility instance used to determine whether keys are readable, or writable.
      */
-    public function __construct(EntityManagerInterface $entityManager, bool $autoFlush = true)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        bool $autoFlush = true,
+        ?AccessibilityInterface $accessibility = null
+    ) {
         $this->entityManager = $entityManager;
         $this->configRepository = $this->entityManager->getRepository(EntityConfigItem::class);
         $this->autoFlush = $autoFlush;
+        $this->accessibility = $accessibility ?? new NullAccessibility();
     }
 
     /**
@@ -78,19 +95,24 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
      * @return mixed Returns the configuration item. If it is not found, the value specified
      * Returns the configuration item. If it is not found, the value specified
      * in $default will be returned.
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueGetException
      */
     public function getByEntity(
         EntityIdentifier $entity,
         string $key,
         $default = null
     ) {
+        if ($this->accessibility->canGetKey($key) === false) {
+            throw new ValueGetException($key);
+        }
 
         $existing = $this->getEntityConfigItem($key, $entity);
-        if ($existing) {
+        if (($existing instanceof EntityConfigItem) === true) {
             return $existing->getValue();
-        } else {
-            return $default;
         }
+
+        return $default;
     }
 
     /**
@@ -105,28 +127,30 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
      *
      * @return void
      *
-     * @throws \InvalidArgumentException
-     *   Thrown if entity is not valid. Typically thrown if entity is
-     *    a valid but empty object.
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueSetException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function setByEntity(EntityIdentifier $entity, string $key, $value)
+    public function setByEntity(EntityIdentifier $entity, string $key, $value): void
     {
-        $existing = $this->getEntityConfigItem($key, $entity);
-        if ($existing) {
-            $existing->setValue($value);
-            $configItem = $existing;
-        } elseif ($entity == null) {
-            $configItem = new EntityConfigItem();
-            $configItem->setKey($key);
-            $configItem->setValue($value);
-        } else {
-            $configItem = new EntityConfigItem();
-            $configItem->setKey($key);
-            $configItem->setValue($value);
-            $configItem->setEntityType($entity->getEntityType());
-            $configItem->setEntityId($entity->getEntityId());
+        if ($this->accessibility->canSetKey($key) === false) {
+            throw new ValueSetException($key);
         }
 
+        $configItem = $this->getEntityConfigItem($key, $entity);
+        if (($configItem instanceof EntityConfigItem) === false) {
+            $configItem = new EntityConfigItem();
+            $configItem->setKey($key);
+            $configItem->setValue($value);
+
+            if (($entity instanceof EntityIdentifier) === true) {
+                $configItem->setEntityId($entity->getEntityId());
+                $configItem->setEntityType($entity->getEntityType());
+            }
+        }
+
+        $configItem->setValue($value);
         $this->entityManager->persist($configItem);
 
         if ($this->autoFlush === true) {
@@ -140,17 +164,16 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
      * @param string $key
      * @param EntityIdentifier $entity
      *
-     * @return EntityConfigItem
-     *
-     * @TODO: Once upgraded to PHP 7.1, set and allow nullable returns.
+     * @return EntityConfigItem|null
      */
-    protected function getEntityConfigItem(string $key, EntityIdentifier $entity = null)
+    protected function getEntityConfigItem(string $key, EntityIdentifier $entity = null): ?EntityConfigItem
     {
         $criteria = [
             'key' => $key,
             'entityType' => null,
             'entityId' => null,
         ];
+
         if ($entity) {
             $criteria['entityType'] = $entity->getEntityType();
             $criteria['entityId'] = $entity->getEntityId();

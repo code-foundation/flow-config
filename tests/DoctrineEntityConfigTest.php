@@ -1,13 +1,20 @@
 <?php
+declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Tests;
 
+use CodeFoundation\FlowConfig\Accessibility\NullAccessibility;
 use CodeFoundation\FlowConfig\Entity\EntityConfigItem;
+use CodeFoundation\FlowConfig\Exceptions\ValueGetException;
+use CodeFoundation\FlowConfig\Exceptions\ValueSetException;
+use CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface;
 use CodeFoundation\FlowConfig\Interfaces\Repository\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
+use CodeFoundation\FlowConfig\Tests\Stubs\AccessibilityStub;
 use CodeFoundation\FlowConfig\Tests\Stubs\EntityManagerStub;
 use CodeFoundation\FlowConfig\Tests\Stubs\EntityStub;
 use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Tests for CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
@@ -17,16 +24,21 @@ use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
 class DoctrineEntityConfigTest extends DatabaseTestCase
 {
     /**
-     * Assert that $autoFlush = false keeps the setter away from flushing the entity.
+     * Assert that `$autoFlush` being set to `false` prevents the setter from flushing the entity.
      *
      * @return void
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueSetException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function testAutoFlushConfigIsRespectedWhenSetToFalse(): void
     {
         $user = new EntityStub('user', 'USER_ID');
 
         $entityManager = new EntityManagerStub();
-        $config = new DoctrineEntityConfig($entityManager, false);
+        $config = $this->getConfigInstance($entityManager, false);
         $config->setByEntity($user, 'key', 'value');
 
         self::assertTrue($entityManager->isPersisted());
@@ -37,13 +49,18 @@ class DoctrineEntityConfigTest extends DatabaseTestCase
      * Assert that default constructor config keeps auto flushing to true.
      *
      * @return void
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueSetException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function testAutoFlushConfigIsRespectedWithDefaultConfig(): void
     {
         $user = new EntityStub('user', 'USER_ID');
 
         $entityManager = new EntityManagerStub();
-        $config = new DoctrineEntityConfig($entityManager);
+        $config = $this->getConfigInstance($entityManager, true);
         $config->setByEntity($user, 'key', 'value');
 
         self::assertTrue($entityManager->isPersisted());
@@ -52,24 +69,34 @@ class DoctrineEntityConfigTest extends DatabaseTestCase
 
     /**
      * Enforce setting expected responses from DoctrineEntityConfig.
+     *
+     * @return void
      */
-    public function testClassStructure()
+    public function testClassStructure(): void
     {
         $config = new DoctrineEntityConfig($this->getEntityManager());
-        $this->assertInstanceOf(EntityConfigRepositoryInterface::class, $config);
-        $this->assertTrue($config->canSetByEntity());
+        self::assertInstanceOf(EntityConfigRepositoryInterface::class, $config);
+        self::assertTrue($config->canSetByEntity());
     }
 
     /**
      * Test that running set() with an identity sets the value for that object.
+     *
+     * @return void
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueGetException
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueSetException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function testDefaultValuesAreReturned()
+    public function testDefaultValuesAreReturned(): void
     {
         $expected = 'different';
-        $config = new DoctrineEntityConfig($this->getEntityManager());
+        $config = $this->getConfigInstance();
         $user = new EntityStub('user', 'lol');
         $config->setByEntity($user, 'somekey', 'newuservalue');
-        $configNew = new DoctrineEntityConfig($this->getEntityManager());
+        $configNew = $this->getConfigInstance();
 
         $actualUserValue = $configNew->getByEntity(
             $user,
@@ -77,29 +104,113 @@ class DoctrineEntityConfigTest extends DatabaseTestCase
             'different'
         );
 
-        $this->assertEquals($expected, $actualUserValue);
+        self::assertSame($expected, $actualUserValue);
+    }
+
+    /**
+     * Tests that the `get` method throws an exception when the accessibility for a key evaluates to `false`.
+     *
+     * @return void
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueGetException
+     */
+    public function testGetThrowsExceptionWhenKeyNotReadable(): void
+    {
+        $config = $this->getConfigInstance(
+            $this->getEntityManager(),
+            true,
+            new AccessibilityStub(false)
+        );
+        $user = new EntityStub('user', 'lol');
+
+        $this->expectException(ValueGetException::class);
+        $this->expectExceptionCode(102);
+        $this->expectExceptionMessage('The value for key \'test-key\' could not be retrieved.');
+
+        $config->getByEntity($user, 'test-key');
+    }
+
+    /**
+     * Tests that the `set` method throws an exception when the accessibility to write a key evaluates to `false`.
+     *
+     * @return void
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueSetException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function testSetThrowsExceptionWhenKeyNotWritable(): void
+    {
+        $config = $this->getConfigInstance(
+            $this->getEntityManager(),
+            true,
+            new AccessibilityStub(true, false)
+        );
+        $user = new EntityStub('user', 'lol');
+
+        $this->expectException(ValueSetException::class);
+        $this->expectExceptionCode(103);
+        $this->expectExceptionMessage('The value for key \'test-key\' could not be set.');
+
+        $config->setByEntity($user, 'test-key', 'my-value');
     }
 
     /**
      * Test that running set() with an identity sets the value for that object.
+     *
+     * @return void
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueGetException
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueSetException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function testSettingValuesIsSaved()
+    public function testSettingValuesIsSaved(): void
     {
         $expected = 'newuservalue';
-        $config = new DoctrineEntityConfig($this->getEntityManager());
+        $config = $this->getConfigInstance($this->getEntityManager(), true);
         $user = new EntityStub('user', 'lol');
         $config->setByEntity($user, 'somekey', 'newuservalue');
-        $configNew = new DoctrineEntityConfig($this->getEntityManager());
+
+        $configNew = $this->getConfigInstance($this->getEntityManager(), true);
 
         $actual1 = $configNew->getByEntity($user, 'somekey', null);
         $actual2 = $configNew->getByEntity($user, 'somekey', 'default');
 
-        $this->assertEquals($expected, $actual1);
-        $this->assertEquals($expected, $actual2);
+        self::assertSame($expected, $actual1);
+        self::assertSame($expected, $actual2);
     }
 
+    /**
+     * Gets a list of entity classes to test.
+     *
+     * @return string[]
+     */
     protected function getEntityList(): array
     {
         return [EntityConfigItem::class];
+    }
+
+    /**
+     * Gets a configuration instance.
+     *
+     * @param \Doctrine\ORM\EntityManagerInterface|null $entityManager
+     * @param bool|null $autoFlush
+     * @param \CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface|null $accessibility
+     *
+     * @return \CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig
+     */
+    private function getConfigInstance(
+        ?EntityManagerInterface $entityManager = null,
+        ?bool $autoFlush = null,
+        ?AccessibilityInterface $accessibility = null
+    ): DoctrineEntityConfig {
+        return new DoctrineEntityConfig(
+            $entityManager ?? $this->getEntityManager(),
+            $autoFlush ?? false,
+            $accessibility ?? new NullAccessibility()
+        );
     }
 }

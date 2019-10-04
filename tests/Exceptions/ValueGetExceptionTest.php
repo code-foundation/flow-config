@@ -6,6 +6,10 @@ namespace CodeFoundation\FlowConfig\Tests\Exceptions;
 use CodeFoundation\FlowConfig\Exceptions\ValueGetException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \CodeFoundation\FlowConfig\Exceptions\ValueGetException
+ * @covers \CodeFoundation\FlowConfig\Exceptions\BaseException
+ */
 class ValueGetExceptionTest extends TestCase
 {
     /**

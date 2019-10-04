@@ -11,19 +11,38 @@ use Doctrine\ORM\Tools\Setup;
 
 /**
  * Build a simple Configuration map for use with Doctrine.
+ *
+ * @codeCoverageIgnore Entity manager builder static methods cannot be asserted for specific behaviour.
  */
 class DoctrineEntityManagerBuilder
 {
+    /**
+     * Gets a Doctrine configuration instance.
+     *
+     * @return \Doctrine\ORM\Configuration
+     */
     public static function getDoctrineConfig(): Configuration
     {
-        $path = dirname(dirname(__DIR__)) . '/src/Entity/DoctrineMaps/';
-        $config = Setup::createConfiguration(true, null, null);
+        $path = \dirname(__DIR__, 2) . '/src/Entity/DoctrineMaps/';
+
+        $config = Setup::createConfiguration(true);
         $config->setMetadataDriverImpl(new XmlDriver(
             new DefaultFileLocator($path, '.orm.xml')
         ));
+
         return $config;
     }
 
+    /**
+     * Gets an entity manager instance.
+     *
+     * @param mixed[] $connectionParameters
+     * @param \Doctrine\ORM\Configuration $config
+     *
+     * @return \Doctrine\ORM\EntityManager
+     *
+     * @throws \Doctrine\ORM\ORMException
+     */
     public static function getEntityManager(array $connectionParameters, Configuration $config): EntityManager
     {
         return EntityManager::create($connectionParameters, $config);

@@ -28,4 +28,18 @@ class EntityKeyChangeExceptionTest extends TestCase
         self::assertSame($message, $exception->getMessage());
         self::assertSame($key, $exception->getKey());
     }
+
+    /**
+     * Tests that the exception message matches the expected default when no key is provided via the constructor.
+     *
+     * @return void
+     */
+    public function testExceptionMessageWhenNoKeyProvided(): void
+    {
+        $message = 'This key has already been set, and therefore cannot be set again.';
+
+        $exception = new EntityKeyChangeException();
+
+        self::assertSame($message, $exception->getMessage());
+    }
 }
