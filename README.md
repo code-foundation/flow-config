@@ -64,6 +64,33 @@ $systemConfig = new DoctrineConfig($this->getEntityManager(), false);
 $entityConfig = new DoctrineEntityConfig($this->getEntityManager(), false);
 ```
 
+## Control key accessibility using the AccessibilityInterface
+In some cases, you may wish to control each specific attempt to get/set specific keys, and this is where implementing
+the AccessibilityInterface is useful.
+
+By default, the `NullAccessibility` class is instantiated, which defaults to allowing all `get` and `set` attempts.
+```php
+class MyAccessibilityClass implements AccessibilityInterface
+{
+    // Set our read-only keys.
+    private $readOnlyKeys = ['abc123'];
+    
+    // Set our keys that are restricted and never returned.
+    private $restrictedKeys = ['xyz987'];
+
+    public function canGetKey(string $key): bool
+    {
+        // Return whether the key is not in our read-only array.
+        return \in_array($key, $this->readOnlyKeys) === false;
+    }
+    
+    public function getSetKey(string $key): bool
+    {
+        // Return whether the key is not in our restricted array.
+        return \in_array($key, $this->restrictedKeys) === false;
+    }
+}
+``` 
 
 ## Examples
 
