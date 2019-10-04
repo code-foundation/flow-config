@@ -18,6 +18,7 @@ class EntityKeyChangeException extends BaseException
         $message = $key === null
             ? 'This key has already been set, and therefore cannot be set again.'
             : \sprintf('The key \'%s\' has already been set, and therefore cannot be set again.', $key);
+        $this->setKey($key);
 
         parent::__construct($message, self::BASE_EXCEPTION_CODE + 1);
     }

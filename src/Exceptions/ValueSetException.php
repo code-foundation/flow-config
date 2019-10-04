@@ -19,5 +19,7 @@ class ValueSetException extends BaseException
             \sprintf('The value for key \'%s\' could not be set.', $key),
             self::BASE_EXCEPTION_CODE + 3
         );
+
+        $this->setKey($key);
     }
 }

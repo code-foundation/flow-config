@@ -19,5 +19,7 @@ class ValueGetException extends BaseException
             \sprintf('The value for key \'%s\' could not be retrieved.', $key),
             self::BASE_EXCEPTION_CODE + 2
         );
+
+        $this->setKey($key);
     }
 }
