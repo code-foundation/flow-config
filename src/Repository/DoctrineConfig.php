@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Repository;
 
+use CodeFoundation\FlowConfig\Accessibility\NullAccessibility;
 use CodeFoundation\FlowConfig\Entity\ConfigItem;
-use CodeFoundation\FlowConfig\Interfaces\ConfigRepositoryInterface;
-use Doctrine\ORM\EntityManager;
+use CodeFoundation\FlowConfig\Exceptions\ValueGetException;
+use CodeFoundation\FlowConfig\Exceptions\ValueSetException;
+use CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface;
+use CodeFoundation\FlowConfig\Interfaces\Repository\ConfigRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -14,18 +17,18 @@ use Doctrine\ORM\EntityManagerInterface;
 class DoctrineConfig implements ConfigRepositoryInterface
 {
     /**
+     * The accessibility instance used to determine readability and writability of keys.
+     *
+     * @var \CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface
+     */
+    private $accessibility;
+
+    /**
      * If the setter should auto flush the config.
      *
      * @var bool
      */
     private $autoFlush;
-
-    /**
-     * EntityManager that stores EntityConfigItems.
-     *
-     * @var EntityManager
-     */
-    private $entityManager;
 
     /**
      * The repository for EntityConfigItem entities.
@@ -35,39 +38,96 @@ class DoctrineConfig implements ConfigRepositoryInterface
     private $configRepository;
 
     /**
+     * EntityManager that stores EntityConfigItems.
+     *
+     * @var \Doctrine\ORM\EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * DoctrineEntityConfig constructor.
      *
      * @param EntityManagerInterface $entityManager
      *   Doctrine EntityManager that can store and retrieve EntityConfigItem.
      * @param bool $autoFlush
      *   Set to false if you don't want the setter to flush the config value. Defaults to true.
+     * @param AccessibilityInterface $accessibility
+     *   The accessibility instance used to determine whether keys are readable, or writable.
      */
-    public function __construct(EntityManagerInterface $entityManager, bool $autoFlush = true)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        bool $autoFlush = true,
+        ?AccessibilityInterface $accessibility = null
+    ) {
         $this->entityManager = $entityManager;
         $this->configRepository = $this->entityManager->getRepository(ConfigItem::class);
         $this->autoFlush = $autoFlush;
+        $this->accessibility = $accessibility ?? new NullAccessibility();
+    }
+
+    /**
+     * Defines if the implementation can support setting values config by entity.
+     *
+     * @return bool
+     *   Always true in this implementation.
+     */
+    public function canSet(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the config value defined by $key.
+     *
+     * @param string $key
+     *   Configuration key string.
+     * @param mixed $default
+     *   Default to return if configuration key is not found. Default to null.
+     *
+     * @return mixed
+     *   Returns the configuration item. If it is not found, the value specified
+     *   in $default will be returned.
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueGetException
+     */
+    public function get(string $key, $default = null)
+    {
+        if ($this->accessibility->canGetKey($key) === false) {
+            throw new ValueGetException($key);
+        }
+
+        $existing = $this->getConfigItem($key);
+        if (($existing instanceof ConfigItem) === true) {
+            return $existing->getValue();
+        }
+
+        return $default;
     }
 
     /**
      * Sets a config value in this repository.
      *
-     * @param string                                       $key
+     * @param string $key
      *   The configuration items key.
      * @param                                              $value
      *   The value to associate with $key.
+     *
+     * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
+     * @throws \CodeFoundation\FlowConfig\Exceptions\ValueSetException
      */
-    public function set(string $key, $value)
+    public function set(string $key, $value): void
     {
-        $existing = $this->getConfigItem($key);
-        if ($existing) {
-            $existing->setValue($value);
-            $configItem = $existing;
-        } else {
+        if ($this->accessibility->canSetKey($key) === false) {
+            throw new ValueSetException($key);
+        }
+
+        $configItem = $this->getConfigItem($key);
+        if (($configItem instanceof ConfigItem) === false) {
             $configItem = new ConfigItem();
             $configItem->setKey($key);
-            $configItem->setValue($value);
         }
+
+        $configItem->setValue($value);
 
         $this->entityManager->persist($configItem);
 
@@ -77,48 +137,13 @@ class DoctrineConfig implements ConfigRepositoryInterface
     }
 
     /**
-     * Get the config value defined by $key.
-     *
-     * @param string                                       $key
-     *   Configuration key string.
-     * @param mixed                                        $default
-     *   Default to return if configuration key is not found. Default to null.
-     *
-     * @return mixed
-     *   Returns the configuration item. If it is not found, the value specified
-     *   in $default will be returned.
-     */
-    public function get(string $key, $default = null)
-    {
-        $existing = $this->getConfigItem($key);
-        if ($existing) {
-            return $existing->getValue();
-        } else {
-            return $default;
-        }
-    }
-
-    /**
-     * Defines if the implementation can support setting values config by entity.
-     *
-     * @return bool
-     *   Always true in this implementation.
-     */
-    public function canSet() : bool
-    {
-        return true;
-    }
-
-    /**
      * Find and return a ConfigItem if it exists.
      *
-     * @param string           $key
+     * @param string $key
      *
-     * @return ConfigItem
-     *
-     * @TODO: Once upgraded to PHP 7.1, set and allow nullable returns.
+     * @return ConfigItem|null
      */
-    protected function getConfigItem(string $key)
+    protected function getConfigItem(string $key): ?ConfigItem
     {
         return $this->configRepository->findOneBy(['key' => $key]);
     }

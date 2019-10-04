@@ -3,7 +3,7 @@
 namespace CodeFoundation\FlowConfig\Tests;
 
 use CodeFoundation\FlowConfig\Entity\ConfigItem;
-use CodeFoundation\FlowConfig\Interfaces\ConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\Repository\ConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\DoctrineConfig;
 use CodeFoundation\FlowConfig\Tests\Stubs\EntityManagerStub;
 use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
@@ -15,19 +15,36 @@ use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
  */
 class DoctrineConfigTest extends DatabaseTestCase
 {
-    protected function getEntityList(): array
+    /**
+     * Assert that $autoFlush = false keeps the setter away from flushing the entity.
+     *
+     * @return void
+     */
+    public function testAutoFlushConfigIsRespectedWhenSetToFalse(): void
     {
-        return [ConfigItem::class];
+        $entityManager = new EntityManagerStub();
+
+        $config = new DoctrineConfig($entityManager, false);
+        $config->set('key', 'value');
+
+        self::assertTrue($entityManager->isPersisted());
+        self::assertFalse($entityManager->isFlushed());
     }
 
     /**
-     * Enforce setting expected responses from DoctrineConfig.
+     * Assert that default constructor config keeps auto flushing to true.
+     *
+     * @return void
      */
-    public function testClassStructure()
+    public function testAutoFlushConfigIsRespectedWithDefaultConfig(): void
     {
-        $config = new DoctrineConfig($this->getEntityManager());
-        $this->assertInstanceOf(ConfigRepositoryInterface::class, $config);
-        $this->assertTrue($config->canSet());
+        $entityManager = new EntityManagerStub();
+
+        $config = new DoctrineConfig($entityManager);
+        $config->set('key', 'value');
+
+        self::assertTrue($entityManager->isPersisted());
+        self::assertTrue($entityManager->isFlushed());
     }
 
     public function testBasicSetGet()
@@ -39,6 +56,16 @@ class DoctrineConfigTest extends DatabaseTestCase
         $actual = $config->get('somekey');
 
         $this->assertSame('somevalue', $actual);
+    }
+
+    /**
+     * Enforce setting expected responses from DoctrineConfig.
+     */
+    public function testClassStructure()
+    {
+        $config = new DoctrineConfig($this->getEntityManager());
+        $this->assertInstanceOf(ConfigRepositoryInterface::class, $config);
+        $this->assertTrue($config->canSet());
     }
 
     /**
@@ -74,6 +101,7 @@ class DoctrineConfigTest extends DatabaseTestCase
 
         $this->assertEquals($expected, $actual);
     }
+
     /**
      * Test that empty values are persisted.
      */
@@ -90,35 +118,8 @@ class DoctrineConfigTest extends DatabaseTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * Assert that $autoFlush = false keeps the setter away from flushing the entity.
-     *
-     * @return void
-     */
-    public function testAutoFlushConfigIsRespectedWhenSetToFalse(): void
+    protected function getEntityList(): array
     {
-        $entityManager = new EntityManagerStub();
-
-        $config = new DoctrineConfig($entityManager, false);
-        $config->set('key', 'value');
-
-        self::assertTrue($entityManager->isPersisted());
-        self::assertFalse($entityManager->isFlushed());
-    }
-
-    /**
-     * Assert that default constructor config keeps auto flushing to true.
-     *
-     * @return void
-     */
-    public function testAutoFlushConfigIsRespectedWithDefaultConfig(): void
-    {
-        $entityManager = new EntityManagerStub();
-
-        $config = new DoctrineConfig($entityManager);
-        $config->set('key', 'value');
-
-        self::assertTrue($entityManager->isPersisted());
-        self::assertTrue($entityManager->isFlushed());
+        return [ConfigItem::class];
     }
 }

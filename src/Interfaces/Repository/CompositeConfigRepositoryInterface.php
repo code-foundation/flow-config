@@ -1,8 +1,7 @@
 <?php
 
-namespace CodeFoundation\FlowConfig\Interfaces;
+namespace CodeFoundation\FlowConfig\Interfaces\Repository;
 
 interface CompositeConfigRepositoryInterface extends ConfigRepositoryInterface, EntityConfigRepositoryInterface
 {
-
 }

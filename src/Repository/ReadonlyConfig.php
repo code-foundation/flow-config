@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Repository;
 
-use CodeFoundation\FlowConfig\Interfaces\ReadonlyConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\Repository\ReadonlyConfigRepositoryInterface;
 
 /**
  * Provides a configuration that cannot altered after construction.
@@ -23,11 +23,22 @@ class ReadonlyConfig implements ReadonlyConfigRepositoryInterface
     }
 
     /**
+     * Defines if the implementation supports setting config values.
+     *
+     * @return bool
+     *   Always false.
+     */
+    public function canSet(): bool
+    {
+        return false;
+    }
+
+    /**
      * Get configuration item from readonly repository.
      *
-     * @param string                                       $key
+     * @param string $key
      *   Key of configuration item to look up.
-     * @param null                                         $default
+     * @param null $default
      *   Value to return if $key is not found.
      *
      * @return mixed
@@ -46,21 +57,10 @@ class ReadonlyConfig implements ReadonlyConfigRepositoryInterface
      * Not implemented in this repository.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function set(string $key, $value)
     {
         throw new \InvalidArgumentException('Setting values is not possible in this repository.');
-    }
-
-    /**
-     * Defines if the implementation supports setting config values.
-     *
-     * @return bool
-     *   Always false.
-     */
-    public function canSet() : bool
-    {
-        return false;
     }
 }

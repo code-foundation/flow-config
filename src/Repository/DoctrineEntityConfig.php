@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace CodeFoundation\FlowConfig\Repository;
 
 use CodeFoundation\FlowConfig\Entity\EntityConfigItem;
-use CodeFoundation\FlowConfig\Interfaces\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Interfaces\EntityIdentifier;
+use CodeFoundation\FlowConfig\Interfaces\Repository\EntityConfigRepositoryInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -25,18 +25,18 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
     private $autoFlush;
 
     /**
-     * EntityManager that stores EntityConfigItems.
-     *
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * The repository for EntityConfigItem entities.
      *
      * @var \Doctrine\ORM\EntityRepository
      */
     private $configRepository;
+
+    /**
+     * EntityManager that stores EntityConfigItems.
+     *
+     * @var EntityManager
+     */
+    private $entityManager;
 
     /**
      * DoctrineEntityConfig constructor.
@@ -54,11 +54,51 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
     }
 
     /**
+     * Defines if the implementation can support setting values config by entity.
+     *
+     * @return bool
+     *   Always true in this implementation.
+     */
+    public function canSetByEntity(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the config value defined by $key.
+     *
+     * @param EntityIdentifier $entity
+     *   Entity to retrieve the configuration value for, if available.
+     *
+     * @param string $key
+     *   Configuration key string.
+     * @param mixed $default
+     *   Default to return if configuration key is not found. Default to null.
+     *
+     * @return mixed Returns the configuration item. If it is not found, the value specified
+     * Returns the configuration item. If it is not found, the value specified
+     * in $default will be returned.
+     */
+    public function getByEntity(
+        EntityIdentifier $entity,
+        string $key,
+        $default = null
+    ) {
+
+        $existing = $this->getEntityConfigItem($key, $entity);
+        if ($existing) {
+            return $existing->getValue();
+        } else {
+            return $default;
+        }
+    }
+
+    /**
      * Sets a config value in this repository.
      *
      * @param EntityIdentifier $entity
      *   An optional entity to associate with $key.
-     * @param string                                  $key
+     * @param string $key
      *   The configuration items key.
      * @param                                         $value
      *   The value to associate with $key.
@@ -95,49 +135,9 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
     }
 
     /**
-     * Get the config value defined by $key.
-     *
-     * @param EntityIdentifier $entity
-     *   Entity to retrieve the configuration value for, if available.
-     *
-     * @param string                                  $key
-     *   Configuration key string.
-     * @param mixed                                   $default
-     *   Default to return if configuration key is not found. Default to null.
-     *
-     * @return mixed Returns the configuration item. If it is not found, the value specified
-     * Returns the configuration item. If it is not found, the value specified
-     * in $default will be returned.
-     */
-    public function getByEntity(
-        EntityIdentifier $entity,
-        string $key,
-        $default = null
-    ) {
-
-        $existing = $this->getEntityConfigItem($key, $entity);
-        if ($existing) {
-            return $existing->getValue();
-        } else {
-            return $default;
-        }
-    }
-
-    /**
-     * Defines if the implementation can support setting values config by entity.
-     *
-     * @return bool
-     *   Always true in this implementation.
-     */
-    public function canSetByEntity() : bool
-    {
-        return true;
-    }
-
-    /**
      * Find and return a EntityConfigItem if it exists.
      *
-     * @param string           $key
+     * @param string $key
      * @param EntityIdentifier $entity
      *
      * @return EntityConfigItem
@@ -155,6 +155,7 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
             $criteria['entityType'] = $entity->getEntityType();
             $criteria['entityId'] = $entity->getEntityId();
         }
+
         return $this->configRepository->findOneBy($criteria);
     }
 }

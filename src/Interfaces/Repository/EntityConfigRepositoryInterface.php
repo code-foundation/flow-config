@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace CodeFoundation\FlowConfig\Interfaces;
+namespace CodeFoundation\FlowConfig\Interfaces\Repository;
+
+use CodeFoundation\FlowConfig\Interfaces\EntityIdentifier;
 
 /**
  * Defines contract for config repositories for entities.
@@ -13,13 +15,22 @@ namespace CodeFoundation\FlowConfig\Interfaces;
 interface EntityConfigRepositoryInterface
 {
     /**
+     * Defines if the implementation can support setting values config by entity.
+     *
+     * @return bool
+     *   TRUE if the implementation supports setting a configuration item
+     *    with EntityIdentifier interfaces.
+     */
+    public function canSetByEntity(): bool;
+
+    /**
      * Get the config value defined by $key.
      *
      * @param EntityIdentifier $entity
      *   Entity to retrieve the configuration value for, if available.
-     * @param string                                  $key
+     * @param string $key
      *   Configuration key string.
-     * @param mixed                                   $default
+     * @param mixed $default
      *   Default to return if configuration key is not found. Default to null.
      *
      * @return mixed Returns the configuration item. If it is not found, the value specified
@@ -30,10 +41,10 @@ interface EntityConfigRepositoryInterface
     /**
      * Sets a config value in this repository.
      *
-     * @param EntityIdentifier      $entity
+     * @param EntityIdentifier $entity
      *   An optional entity to associate with $key.
      *
-     * @param string                                       $key
+     * @param string $key
      *   The configuration items key.
      * @param                                              $value
      *   The value to associate with $key.
@@ -45,13 +56,4 @@ interface EntityConfigRepositoryInterface
      *   Typically this means canSetByEntity() returning false was ignored.
      */
     public function setByEntity(EntityIdentifier $entity, string $key, $value);
-
-    /**
-     * Defines if the implementation can support setting values config by entity.
-     *
-     * @return bool
-     *   TRUE if the implementation supports setting a configuration item
-     *    with EntityIdentifier interfaces.
-     */
-    public function canSetByEntity() : bool;
 }

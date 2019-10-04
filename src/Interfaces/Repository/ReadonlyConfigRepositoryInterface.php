@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace CodeFoundation\FlowConfig\Interfaces;
+namespace CodeFoundation\FlowConfig\Interfaces\Repository;
 
 /**
  * Defines a readonly config interface. Mostly used for type hinting.
@@ -9,11 +9,19 @@ namespace CodeFoundation\FlowConfig\Interfaces;
 interface ReadonlyConfigRepositoryInterface
 {
     /**
+     * Defines if the implementation supports setting config values.
+     *
+     * @return bool
+     *   TRUE if the implementation supports setting a configuration item.
+     */
+    public function canSet(): bool;
+
+    /**
      * Get the config value defined by $key.
      *
-     * @param string                                       $key
+     * @param string $key
      *   Configuration key string.
-     * @param mixed                                        $default
+     * @param mixed $default
      *   Default to return if configuration key is not found. Default to null.
      *
      * @return mixed
@@ -21,12 +29,4 @@ interface ReadonlyConfigRepositoryInterface
      *   in $default will be returned.
      */
     public function get(string $key, $default = null);
-
-    /**
-     * Defines if the implementation supports setting config values.
-     *
-     * @return bool
-     *   TRUE if the implementation supports setting a configuration item.
-     */
-    public function canSet() : bool;
 }

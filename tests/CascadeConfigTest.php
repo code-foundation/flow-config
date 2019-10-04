@@ -5,12 +5,12 @@ namespace CodeFoundation\FlowConfig\Tests;
 
 use CodeFoundation\FlowConfig\Entity\ConfigItem;
 use CodeFoundation\FlowConfig\Entity\EntityConfigItem;
+use CodeFoundation\FlowConfig\Interfaces\Repository\CompositeConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\Repository\ConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\Repository\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\CascadeConfig;
-use CodeFoundation\FlowConfig\Interfaces\CompositeConfigRepositoryInterface;
-use CodeFoundation\FlowConfig\Interfaces\ConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\DoctrineConfig;
 use CodeFoundation\FlowConfig\Repository\DoctrineEntityConfig;
-use CodeFoundation\FlowConfig\Interfaces\EntityConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
 use CodeFoundation\FlowConfig\Tests\Stubs\EntityStub;
 use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
@@ -22,64 +22,6 @@ use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
  */
 class CascadeConfigTest extends DatabaseTestCase
 {
-    protected function getEntityList(): array
-    {
-        return [EntityConfigItem::class, ConfigItem::class];
-    }
-
-    /**
-     * Create new CascadeConfig.
-     *
-     * Note that this builds new implementation each time to ensure the implementation
-     *  does not just cache config values in memory.
-     *
-     * @return CascadeConfig
-     *   Configure CascadeConfig.
-     */
-    private function buildCascadeConfig()
-    {
-        $roConfig = new ReadonlyConfig([
-            'defaultkey1' => 'defaultvalue1',
-            'defaultkey2' => 'defaultvalue2',
-            'defaultkey3' => 'defaultvalue3',
-        ]);
-        $systemConfig = new DoctrineConfig($this->getEntityManager());
-        $entityConfig = new DoctrineEntityConfig($this->getEntityManager());
-
-        $config = new CascadeConfig($roConfig, $systemConfig, $entityConfig);
-
-        return $config;
-    }
-
-    /**
-     * Enforce setting expected responses from DoctrineEntityConfig.
-     */
-    public function testClassStructure()
-    {
-        $config = $this->buildCascadeConfig();
-        $this->assertInstanceOf(ConfigRepositoryInterface::class, $config);
-        $this->assertInstanceOf(EntityConfigRepositoryInterface::class, $config);
-        $this->assertInstanceOf(CompositeConfigRepositoryInterface::class, $config);
-        $this->assertTrue($config->canSet());
-        $this->assertTrue($config->canSetByEntity());
-    }
-
-    /**
-     * Test basic setting of values is persistent.
-     */
-    public function testBasicSetGet()
-    {
-        $expected = 'somevalue';
-
-        $config = $this->buildCascadeConfig();
-        $config->set('somekey', 'somevalue');
-
-        $config2 = $this->buildCascadeConfig();
-        $actual = $config2->get('somekey');
-
-        $this->assertSame($expected, $actual);
-    }
-
     /**
      * Test basic setting of values is persistent.
      */
@@ -92,6 +34,22 @@ class CascadeConfigTest extends DatabaseTestCase
 
         $config2 = $this->buildCascadeConfig();
         $config2->set('somekey', '');
+
+        $config2 = $this->buildCascadeConfig();
+        $actual = $config2->get('somekey');
+
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * Test basic setting of values is persistent.
+     */
+    public function testBasicSetGet()
+    {
+        $expected = 'somevalue';
+
+        $config = $this->buildCascadeConfig();
+        $config->set('somekey', 'somevalue');
 
         $config2 = $this->buildCascadeConfig();
         $actual = $config2->get('somekey');
@@ -123,34 +81,31 @@ class CascadeConfigTest extends DatabaseTestCase
     }
 
     /**
-     * Test that defaults get used.
+     * Enforce setting expected responses from DoctrineEntityConfig.
      */
-    public function testMissingKeys()
+    public function testClassStructure()
     {
-        $expected1 = null;
-        $expected2 = 'xyz';
-
         $config = $this->buildCascadeConfig();
-
-        $actual1 = $config->get('key1');
-        $actual2 = $config->get('key1', 'xyz');
-
-        $this->assertEquals($expected1, $actual1);
-        $this->assertEquals($expected2, $actual2);
+        $this->assertInstanceOf(ConfigRepositoryInterface::class, $config);
+        $this->assertInstanceOf(EntityConfigRepositoryInterface::class, $config);
+        $this->assertInstanceOf(CompositeConfigRepositoryInterface::class, $config);
+        $this->assertTrue($config->canSet());
+        $this->assertTrue($config->canSetByEntity());
     }
 
     /**
-     * Test that setting and getting a entity configuration item sets it.
+     * Test that requesting a config value for an entity falls through to
+     *  the system config.
      */
-    public function testUserSettingValues()
+    public function testEntityDefaultsAreHonoured()
     {
-        $expected = 'abc';
-        $config = $this->buildCascadeConfig();
-        $user = new EntityStub('user', 'abc');
-        $config->setByEntity($user, 'somekey', 'abc');
+        $expected = 'defaultvalueabc';
 
-        $config2 = $this->buildCascadeConfig();
-        $actual = $config2->getByEntity($user, 'somekey', null);
+        $config = $this->buildCascadeConfig();
+
+        $user = new EntityStub('user', 'hoho');
+
+        $actual = $config->getByEntity($user, 'defaultkey3', 'defaultvalueabc');
 
         $this->assertEquals($expected, $actual);
     }
@@ -192,19 +147,64 @@ class CascadeConfigTest extends DatabaseTestCase
     }
 
     /**
-     * Test that requesting a config value for an entity falls through to
-     *  the system config.
+     * Test that defaults get used.
      */
-    public function testEntityDefaultsAreHonoured()
+    public function testMissingKeys()
     {
-        $expected = 'defaultvalueabc';
+        $expected1 = null;
+        $expected2 = 'xyz';
 
         $config = $this->buildCascadeConfig();
 
-        $user = new EntityStub('user', 'hoho');
+        $actual1 = $config->get('key1');
+        $actual2 = $config->get('key1', 'xyz');
 
-        $actual = $config->getByEntity($user, 'defaultkey3', 'defaultvalueabc');
+        $this->assertEquals($expected1, $actual1);
+        $this->assertEquals($expected2, $actual2);
+    }
+
+    /**
+     * Test that setting and getting a entity configuration item sets it.
+     */
+    public function testUserSettingValues()
+    {
+        $expected = 'abc';
+        $config = $this->buildCascadeConfig();
+        $user = new EntityStub('user', 'abc');
+        $config->setByEntity($user, 'somekey', 'abc');
+
+        $config2 = $this->buildCascadeConfig();
+        $actual = $config2->getByEntity($user, 'somekey', null);
 
         $this->assertEquals($expected, $actual);
+    }
+
+    protected function getEntityList(): array
+    {
+        return [EntityConfigItem::class, ConfigItem::class];
+    }
+
+    /**
+     * Create new CascadeConfig.
+     *
+     * Note that this builds new implementation each time to ensure the implementation
+     *  does not just cache config values in memory.
+     *
+     * @return CascadeConfig
+     *   Configure CascadeConfig.
+     */
+    private function buildCascadeConfig()
+    {
+        $roConfig = new ReadonlyConfig([
+            'defaultkey1' => 'defaultvalue1',
+            'defaultkey2' => 'defaultvalue2',
+            'defaultkey3' => 'defaultvalue3',
+        ]);
+        $systemConfig = new DoctrineConfig($this->getEntityManager());
+        $entityConfig = new DoctrineEntityConfig($this->getEntityManager());
+
+        $config = new CascadeConfig($roConfig, $systemConfig, $entityConfig);
+
+        return $config;
     }
 }

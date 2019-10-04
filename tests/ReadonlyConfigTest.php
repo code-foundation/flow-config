@@ -2,7 +2,7 @@
 
 namespace CodeFoundation\FlowConfig\Tests;
 
-use CodeFoundation\FlowConfig\Interfaces\ReadonlyConfigRepositoryInterface;
+use CodeFoundation\FlowConfig\Interfaces\Repository\ReadonlyConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
 
 /**
@@ -12,16 +12,6 @@ use CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
  */
 class ReadonlyConfigTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * Enforce setting expected responses from ReadonlyConfig.
-     */
-    public function testClassStructure()
-    {
-        $config = new ReadonlyConfig(['somekey' => 'somevalue']);
-        $this->assertInstanceOf(ReadonlyConfigRepositoryInterface::class, $config);
-        $this->assertFalse($config->canSet());
-    }
-
     /**
      * Test that basic get() against a known key works properly.
      */
@@ -34,6 +24,16 @@ class ReadonlyConfigTest extends \PHPUnit\Framework\TestCase
         $actual = $config->get('somekey');
 
         $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * Enforce setting expected responses from ReadonlyConfig.
+     */
+    public function testClassStructure()
+    {
+        $config = new ReadonlyConfig(['somekey' => 'somevalue']);
+        $this->assertInstanceOf(ReadonlyConfigRepositoryInterface::class, $config);
+        $this->assertFalse($config->canSet());
     }
 
     /**

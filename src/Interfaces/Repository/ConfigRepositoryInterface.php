@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace CodeFoundation\FlowConfig\Interfaces;
+namespace CodeFoundation\FlowConfig\Interfaces\Repository;
 
 /**
  * Defines the interface for all normal repositories.
@@ -15,7 +15,7 @@ interface ConfigRepositoryInterface extends ReadonlyConfigRepositoryInterface
     /**
      * Sets a config value in this repository.
      *
-     * @param string                                       $key
+     * @param string $key
      *   The configuration items key.
      * @param                                              $value
      *   The value to associate with $key.
