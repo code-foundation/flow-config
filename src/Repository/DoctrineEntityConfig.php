@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Repository;
 
-use CodeFoundation\FlowConfig\Accessibility\NullAccessibility;
+use CodeFoundation\FlowConfig\AccessControl\NullAccessControl;
 use CodeFoundation\FlowConfig\Entity\EntityConfigItem;
 use CodeFoundation\FlowConfig\Exceptions\ValueGetException;
 use CodeFoundation\FlowConfig\Exceptions\ValueSetException;
-use CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface;
+use CodeFoundation\FlowConfig\Interfaces\AccessControl\AccessControlInterface;
 use CodeFoundation\FlowConfig\Interfaces\EntityIdentifier;
 use CodeFoundation\FlowConfig\Interfaces\Repository\EntityConfigRepositoryInterface;
 use Doctrine\ORM\EntityManager;
@@ -22,11 +22,11 @@ use Doctrine\ORM\EntityManagerInterface;
 class DoctrineEntityConfig implements EntityConfigRepositoryInterface
 {
     /**
-     * The accessibility instance used to determine readability and writability of keys.
+     * The access control instance used to determine readability and writability of keys.
      *
-     * @var \CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface|null
+     * @var \CodeFoundation\FlowConfig\Interfaces\AccessControl\AccessControlInterface|null
      */
-    private $accessibility;
+    private $accessControl;
 
     /**
      * If the setter should auto flush the config.
@@ -56,18 +56,18 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
      *   Doctrine EntityManager that can store and retrieve EntityConfigItem.
      * @param bool $autoFlush
      *   Set to false if you don't want the setter to flush the config value. Defaults to true.
-     * @param AccessibilityInterface $accessibility
-     *   The accessibility instance used to determine whether keys are readable, or writable.
+     * @param AccessControlInterface $accessControl
+     *   The access control instance used to determine whether keys can be retrieved or set.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         bool $autoFlush = true,
-        ?AccessibilityInterface $accessibility = null
+        ?AccessControlInterface $accessControl = null
     ) {
         $this->entityManager = $entityManager;
         $this->configRepository = $this->entityManager->getRepository(EntityConfigItem::class);
         $this->autoFlush = $autoFlush;
-        $this->accessibility = $accessibility ?? new NullAccessibility();
+        $this->accessControl = $accessControl ?? new NullAccessControl();
     }
 
     /**
@@ -103,7 +103,7 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
         string $key,
         $default = null
     ) {
-        if ($this->accessibility->canGetKey($key) === false) {
+        if ($this->accessControl->canGetKey($key, $entity) === false) {
             throw new ValueGetException($key);
         }
 
@@ -134,7 +134,7 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
      */
     public function setByEntity(EntityIdentifier $entity, string $key, $value): void
     {
-        if ($this->accessibility->canSetKey($key) === false) {
+        if ($this->accessControl->canSetKey($key, $entity) === false) {
             throw new ValueSetException($key);
         }
 

@@ -64,13 +64,16 @@ $systemConfig = new DoctrineConfig($this->getEntityManager(), false);
 $entityConfig = new DoctrineEntityConfig($this->getEntityManager(), false);
 ```
 
-## Control key accessibility using the AccessibilityInterface
+## Control key access using the AccessControlInterface
 In some cases, you may wish to control each specific attempt to get/set specific keys, and this is where implementing
-the AccessibilityInterface is useful.
+the AccessControlInterface is useful.
 
-By default, the `NullAccessibility` class is instantiated, which defaults to allowing all `get` and `set` attempts.
+By default, the `NullAccessControl` class is instantiated, which defaults to allowing all `get` and `set` attempts.
+
+By implementing the interface, you have control over allowing or denying get and set access to keys based on the key
+itself, or optionally the entity associated with the key, or one of its method values.
 ```php
-class MyAccessibilityClass implements AccessibilityInterface
+class MyAccessControlClass implements AccessControlInterface
 {
     // Set our read-only keys.
     private $readOnlyKeys = ['abc123'];
@@ -78,16 +81,28 @@ class MyAccessibilityClass implements AccessibilityInterface
     // Set our keys that are restricted and never returned.
     private $restrictedKeys = ['xyz987'];
 
-    public function canGetKey(string $key): bool
+    // Set entities that cannot be modified
+    private $readOnlyEntities = [MyEntityClass::class];
+
+    public function canGetKey(string $key, ?EntityIdentity $entity = null): bool
     {
         // Return whether the key is not in our read-only array.
         return \in_array($key, $this->readOnlyKeys) === false;
     }
     
-    public function getSetKey(string $key): bool
+    public function getSetKey(string $key, ?EntityIdentity $entity = null): bool
     {
-        // Return whether the key is not in our restricted array.
-        return \in_array($key, $this->restrictedKeys) === false;
+        // Check whether the key is in our restricted array.
+        if (\in_array($key, $this->restrictedKeys) === true) {
+            return false;
+        }
+
+        // Check whether the entity is read only
+        if ($entity !== null && in_array(\get_class($entity), $this->readOnlyEntities) === true) {
+            return false;
+        }
+        
+        return true;
     }
 }
 ``` 

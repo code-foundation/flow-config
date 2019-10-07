@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Tests\Stubs;
 
-use CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface;
+use CodeFoundation\FlowConfig\Interfaces\AccessControl\AccessControlInterface;
+use CodeFoundation\FlowConfig\Interfaces\EntityIdentifier;
 
 /**
  * @coversNothing
  */
-class AccessibilityStub implements AccessibilityInterface
+class AccessControlStub implements AccessControlInterface
 {
     /**
      * @var bool
@@ -35,7 +36,7 @@ class AccessibilityStub implements AccessibilityInterface
     /**
      * {@inheritdoc}
      */
-    public function canGetKey(string $key): bool
+    public function canGetKey(string $key, ?EntityIdentifier $entity = null): bool
     {
         return $this->canGet;
     }
@@ -43,7 +44,7 @@ class AccessibilityStub implements AccessibilityInterface
     /**
      * {@inheritdoc}
      */
-    public function canSetKey(string $key): bool
+    public function canSetKey(string $key, ?EntityIdentifier $entity = null): bool
     {
         return $this->canSet;
     }

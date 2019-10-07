@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Tests;
 
-use CodeFoundation\FlowConfig\Accessibility\NullAccessibility;
+use CodeFoundation\FlowConfig\AccessControl\NullAccessControl;
 use CodeFoundation\FlowConfig\Entity\ConfigItem;
 use CodeFoundation\FlowConfig\Exceptions\ValueGetException;
 use CodeFoundation\FlowConfig\Exceptions\ValueSetException;
-use CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface;
+use CodeFoundation\FlowConfig\Interfaces\AccessControl\AccessControlInterface;
 use CodeFoundation\FlowConfig\Interfaces\Repository\ConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\DoctrineConfig;
-use CodeFoundation\FlowConfig\Tests\Stubs\AccessibilityStub;
+use CodeFoundation\FlowConfig\Tests\Stubs\AccessControlStub;
 use CodeFoundation\FlowConfig\Tests\Stubs\EntityManagerStub;
 use CodeFoundation\FlowConfig\Tests\TestCases\DatabaseTestCase;
 use Doctrine\ORM\EntityManagerInterface;
@@ -103,7 +103,7 @@ class DoctrineConfigTest extends DatabaseTestCase
         $config = $this->getConfigInstance(
             $this->getEntityManager(),
             true,
-            new AccessibilityStub(false)
+            new AccessControlStub(false)
         );
 
         $this->expectException(ValueGetException::class);
@@ -194,7 +194,7 @@ class DoctrineConfigTest extends DatabaseTestCase
         $config = $this->getConfigInstance(
             $this->getEntityManager(),
             true,
-            new AccessibilityStub(true, false)
+            new AccessControlStub(true, false)
         );
 
         $this->expectException(ValueSetException::class);
@@ -219,19 +219,19 @@ class DoctrineConfigTest extends DatabaseTestCase
      *
      * @param \Doctrine\ORM\EntityManagerInterface|null $entityManager
      * @param bool|null $autoFlush
-     * @param \CodeFoundation\FlowConfig\Interfaces\Accessibility\AccessibilityInterface|null $accessibility
+     * @param \CodeFoundation\FlowConfig\Interfaces\AccessControl\AccessControlInterface|null $accessibility
      *
      * @return \CodeFoundation\FlowConfig\Repository\DoctrineConfig
      */
     private function getConfigInstance(
         ?EntityManagerInterface $entityManager = null,
         ?bool $autoFlush = null,
-        ?AccessibilityInterface $accessibility = null
+        ?AccessControlInterface $accessibility = null
     ): DoctrineConfig {
         return new DoctrineConfig(
             $entityManager ?? $this->getEntityManager(),
             $autoFlush ?? false,
-            $accessibility ?? new NullAccessibility()
+            $accessibility ?? new NullAccessControl()
         );
     }
 }

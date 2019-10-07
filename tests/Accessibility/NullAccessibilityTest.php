@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace CodeFoundation\FlowConfig\Tests\Accessibility;
 
-use CodeFoundation\FlowConfig\Accessibility\NullAccessibility;
+use CodeFoundation\FlowConfig\AccessControl\NullAccessControl;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \CodeFoundation\FlowConfig\Accessibility\NullAccessibility
+ * @covers \CodeFoundation\FlowConfig\AccessControl\NullAccessControl
  */
 class NullAccessibilityTest extends TestCase
 {
@@ -19,7 +19,7 @@ class NullAccessibilityTest extends TestCase
      */
     public function testConstructedInstance(): void
     {
-        $accessibility = new NullAccessibility();
+        $accessibility = new NullAccessControl();
 
         self::assertTrue($accessibility->canGetKey('test'));
         self::assertTrue($accessibility->canSetKey('test'));
