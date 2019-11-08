@@ -15,7 +15,7 @@
 
             Refer https://dev.mysql.com/doc/refman/5.6/en/innodb-restrictions.html
         -->
-        <id name="key" column="key" type="string" length="64"><generator strategy="NONE"/></id>
+        <id name="key" column="`key`" type="string" length="64"><generator strategy="NONE"/></id>
         <id name="entityType" column="entity_type" type="string" length="191"><generator strategy="NONE"/></id>
         <id name="entityId" column="entity_id" type="string" length="64"><generator strategy="NONE"/></id>
         <field name="value" column="value" type="string" nullable="true" unique="false" />
