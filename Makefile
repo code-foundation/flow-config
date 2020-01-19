@@ -9,4 +9,4 @@ phpcs:
 	vendor/bin/phpcs -p
 
 phpstan:
-	vendor/bin/phpstan --level=1 analyse src/ tests/
+	vendor/bin/phpstan --level=8 analyse src/ tests/
