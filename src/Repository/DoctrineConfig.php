@@ -33,7 +33,7 @@ class DoctrineConfig implements ConfigRepositoryInterface
     /**
      * The repository for EntityConfigItem entities.
      *
-     * @var \Doctrine\ORM\EntityRepository
+     * @var \Doctrine\Persistence\ObjectRepository
      */
     private $configRepository;
 
@@ -47,7 +47,7 @@ class DoctrineConfig implements ConfigRepositoryInterface
     /**
      * DoctrineEntityConfig constructor.
      *
-     * @param EntityManagerInterface $entityManager
+     * @param \Doctrine\ORM\EntityManagerInterface $entityManager
      *   Doctrine EntityManager that can store and retrieve EntityConfigItem.
      * @param bool $autoFlush
      *   Set to false if you don't want the setter to flush the config value. Defaults to true.
@@ -145,6 +145,7 @@ class DoctrineConfig implements ConfigRepositoryInterface
      */
     protected function getConfigItem(string $key): ?ConfigItem
     {
+        /** @var ConfigItem|null */
         return $this->configRepository->findOneBy(['key' => $key]);
     }
 }

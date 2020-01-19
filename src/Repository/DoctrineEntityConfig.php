@@ -38,14 +38,14 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
     /**
      * The repository for EntityConfigItem entities.
      *
-     * @var \Doctrine\ORM\EntityRepository
+     * @var \Doctrine\Persistence\ObjectRepository
      */
     private $configRepository;
 
     /**
      * EntityManager that stores EntityConfigItems.
      *
-     * @var EntityManager
+     * @var \Doctrine\ORM\EntityManagerInterface
      */
     private $entityManager;
 
