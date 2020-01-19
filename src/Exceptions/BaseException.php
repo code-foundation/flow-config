@@ -36,6 +36,7 @@ abstract class BaseException extends \Exception
         ?int $code = null,
         ?Throwable $previous = null
     ) {
+        $message = $message ?? '';
         parent::__construct($message, $code ?? self::BASE_EXCEPTION_CODE, $previous);
     }
 
