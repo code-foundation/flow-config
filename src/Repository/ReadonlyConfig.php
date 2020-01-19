@@ -10,12 +10,15 @@ use CodeFoundation\FlowConfig\Interfaces\Repository\ReadonlyConfigRepositoryInte
  */
 class ReadonlyConfig implements ReadonlyConfigRepositoryInterface
 {
+    /**
+     * @var string[]
+     */
     private $data;
 
     /**
      * Build a readonly configuration
      *
-     * @param array $config
+     * @param string[] $config Set of Key/value settings to preload this repository with.
      */
     public function __construct(array $config)
     {
