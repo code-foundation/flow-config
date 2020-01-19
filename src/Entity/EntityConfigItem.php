@@ -5,6 +5,9 @@ namespace CodeFoundation\FlowConfig\Entity;
 
 use CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException;
 
+/**
+ * Key/Value entity for associating settings against another entity.
+ */
 class EntityConfigItem
 {
     /**
@@ -60,6 +63,8 @@ class EntityConfigItem
     }
 
     /**
+     * Get the current key for this setting for the attached entity.
+     *
      * @return string
      */
     public function getKey(): string
@@ -68,6 +73,8 @@ class EntityConfigItem
     }
 
     /**
+     * Get the current value of this setting for the attached entity.
+     *
      * @return string
      */
     public function getValue(): string
@@ -97,7 +104,7 @@ class EntityConfigItem
      *
      * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
      */
-    public function setEntityType($entityType)
+    public function setEntityType($entityType): void
     {
         if ($this->entityType !== null) {
             throw new EntityKeyChangeException();
