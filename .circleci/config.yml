@@ -18,7 +18,7 @@ jobs:
         command: vendor/bin/phpcs
     - run:
         name: Run PHPStan
-        command: vendor/bin/phpstan --level=1 analyse src/ tests/
+        command: vendor/bin/phpstan --level=8 analyse src/ tests/
     - run:
         name: Run Unit tests
         command: vendor/bin/phpunit --log-junit build/phpunit/junit.xml --coverage-clover build/phpunit/coverage.xml
