@@ -5,7 +5,7 @@ jobs:
   build:
     working_directory: ~/flowconfig
     docker:
-    - image: circleci/php:7.1-cli-browsers-legacy
+    - image: circleci/php:7.3-cli-browsers-legacy
       environment:
         APP_ENV: test
     steps:
