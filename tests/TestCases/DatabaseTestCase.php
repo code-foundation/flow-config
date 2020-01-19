@@ -18,7 +18,7 @@ abstract class DatabaseTestCase extends TestCase
      */
     protected $entityManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->entityManager = $this->getEntityManager();

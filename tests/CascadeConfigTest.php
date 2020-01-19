@@ -25,7 +25,7 @@ class CascadeConfigTest extends DatabaseTestCase
     /**
      * Test basic setting of values is persistent.
      */
-    public function testBasicSetEmptyKeys()
+    public function testBasicSetEmptyKeys(): void
     {
         $expected = null;
 
@@ -44,7 +44,7 @@ class CascadeConfigTest extends DatabaseTestCase
     /**
      * Test basic setting of values is persistent.
      */
-    public function testBasicSetGet()
+    public function testBasicSetGet(): void
     {
         $expected = 'somevalue';
 
@@ -60,7 +60,7 @@ class CascadeConfigTest extends DatabaseTestCase
     /**
      * Test that site config overrides the vendor configuration.
      */
-    public function testCascadeConfigValues()
+    public function testCascadeConfigValues(): void
     {
         $expected1 = 'defaultvalue1';
         $expected2 = 'newkey1';
@@ -83,7 +83,7 @@ class CascadeConfigTest extends DatabaseTestCase
     /**
      * Enforce setting expected responses from DoctrineEntityConfig.
      */
-    public function testClassStructure()
+    public function testClassStructure(): void
     {
         $config = $this->buildCascadeConfig();
         $this->assertInstanceOf(ConfigRepositoryInterface::class, $config);
@@ -114,7 +114,7 @@ class CascadeConfigTest extends DatabaseTestCase
      * Test that requesting a config value for an entity falls through to
      *  the readonly config.
      */
-    public function testEntityValuesCascadeToRoConfig()
+    public function testEntityValuesCascadeToRoConfig(): void
     {
         $expected = 'defaultvalue2';
         $config = $this->buildCascadeConfig();
@@ -131,7 +131,7 @@ class CascadeConfigTest extends DatabaseTestCase
      * Test that requesting a config value for an entity falls through to
      *  the system config.
      */
-    public function testEntityValuesCascadeToSystemConfig()
+    public function testEntityValuesCascadeToSystemConfig(): void
     {
         $expected = 'newvalue';
 
@@ -149,7 +149,7 @@ class CascadeConfigTest extends DatabaseTestCase
     /**
      * Test that defaults get used.
      */
-    public function testMissingKeys()
+    public function testMissingKeys(): void
     {
         $expected1 = null;
         $expected2 = 'xyz';
@@ -166,7 +166,7 @@ class CascadeConfigTest extends DatabaseTestCase
     /**
      * Test that setting and getting a entity configuration item sets it.
      */
-    public function testUserSettingValues()
+    public function testUserSettingValues(): void
     {
         $expected = 'abc';
         $config = $this->buildCascadeConfig();
@@ -193,7 +193,7 @@ class CascadeConfigTest extends DatabaseTestCase
      * @return CascadeConfig
      *   Configure CascadeConfig.
      */
-    private function buildCascadeConfig()
+    private function buildCascadeConfig(): CascadeConfig
     {
         $roConfig = new ReadonlyConfig([
             'defaultkey1' => 'defaultvalue1',

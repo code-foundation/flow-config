@@ -15,7 +15,7 @@ class ReadonlyConfigTest extends \PHPUnit\Framework\TestCase
     /**
      * Test that basic get() against a known key works properly.
      */
-    public function testBasicGet()
+    public function testBasicGet(): void
     {
         $expected = 'somevalue';
 
@@ -29,7 +29,7 @@ class ReadonlyConfigTest extends \PHPUnit\Framework\TestCase
     /**
      * Enforce setting expected responses from ReadonlyConfig.
      */
-    public function testClassStructure()
+    public function testClassStructure(): void
     {
         $config = new ReadonlyConfig(['somekey' => 'somevalue']);
         $this->assertInstanceOf(ReadonlyConfigRepositoryInterface::class, $config);
@@ -39,7 +39,7 @@ class ReadonlyConfigTest extends \PHPUnit\Framework\TestCase
     /**
      * Test that default values are returned when the key doesn't exist.
      */
-    public function testGetDefaults()
+    public function testGetDefaults(): void
     {
         $expected1 = 'somevalue';
         $expected2 = 'default2';
@@ -62,7 +62,7 @@ class ReadonlyConfigTest extends \PHPUnit\Framework\TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Setting values is not possible in this repository.
      */
-    public function testSetValueException()
+    public function testSetValueException(): void
     {
         $config = new ReadonlyConfig(['somekey' => 'somevalue']);
         $config->set('anykey', 'somevalue');
