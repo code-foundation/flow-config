@@ -15,6 +15,7 @@ class RepositoryStub implements ObjectRepository
      */
     public function find($id)
     {
+        return null;
     }
 
     /**
@@ -22,6 +23,7 @@ class RepositoryStub implements ObjectRepository
      */
     public function findAll()
     {
+        return [];
     }
 
     /**
@@ -29,6 +31,7 @@ class RepositoryStub implements ObjectRepository
      */
     public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
+        return [];
     }
 
     /**
@@ -44,5 +47,6 @@ class RepositoryStub implements ObjectRepository
      */
     public function getClassName()
     {
+        return 'TestType';
     }
 }
