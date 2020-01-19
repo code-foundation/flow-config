@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace CodeFoundation\FlowConfig\Tests\Entity;
+namespace CodeFoundation\FlowConfig\Tests\Entities;
 
 use CodeFoundation\FlowConfig\Entity\EntityConfigItem;
 use CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException;
