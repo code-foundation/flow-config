@@ -164,18 +164,13 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
      *
      * @return EntityConfigItem|null
      */
-    protected function getEntityConfigItem(string $key, EntityIdentifier $entity = null): ?EntityConfigItem
+    protected function getEntityConfigItem(string $key, EntityIdentifier $entity): ?EntityConfigItem
     {
         $criteria = [
             'key' => $key,
-            'entityType' => null,
-            'entityId' => null,
+            'entityType' => $entity->getEntityType(),
+            'entityId' => $entity->getEntityId(),
         ];
-
-        if ($entity) {
-            $criteria['entityType'] = $entity->getEntityType();
-            $criteria['entityId'] = $entity->getEntityId();
-        }
 
         /** @var \CodeFoundation\FlowConfig\Entity\EntityConfigItem|null */
         return $this->configRepository->findOneBy($criteria);
