@@ -46,7 +46,7 @@ interface EntityConfigRepositoryInterface
      *
      * @param string $key
      *   The configuration items key.
-     * @param                                              $value
+     * @param string $value
      *   The value to associate with $key.
      *
      * @return void
@@ -55,5 +55,5 @@ interface EntityConfigRepositoryInterface
      *   Thrown if it is not possible to set values associated with this repository.
      *   Typically this means canSetByEntity() returning false was ignored.
      */
-    public function setByEntity(EntityIdentifier $entity, string $key, $value);
+    public function setByEntity(EntityIdentifier $entity, string $key, string $value);
 }

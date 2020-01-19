@@ -122,7 +122,7 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
      *   An optional entity to associate with $key.
      * @param string $key
      *   The configuration items key.
-     * @param                                         $value
+     * @param string $value
      *   The value to associate with $key.
      *
      * @return void
@@ -132,7 +132,7 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function setByEntity(EntityIdentifier $entity, string $key, $value): void
+    public function setByEntity(EntityIdentifier $entity, string $key, string $value): void
     {
         if ($this->accessControl->canSetKey($key, $entity) === false) {
             throw new ValueSetException($key);

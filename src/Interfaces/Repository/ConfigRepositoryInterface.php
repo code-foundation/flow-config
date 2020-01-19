@@ -17,12 +17,12 @@ interface ConfigRepositoryInterface extends ReadonlyConfigRepositoryInterface
      *
      * @param string $key
      *   The configuration items key.
-     * @param                                              $value
+     * @param string $value
      *   The value to associate with $key.
      *
      * @throws \RuntimeException
      *   Thrown if it is not possible to set values associated with this repository.
      *   Typically this means canSetByEntity() returning false was ignored.
      */
-    public function set(string $key, $value);
+    public function set(string $key, string $value): void;
 }

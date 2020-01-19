@@ -109,13 +109,13 @@ class DoctrineConfig implements ConfigRepositoryInterface
      *
      * @param string $key
      *   The configuration items key.
-     * @param                                              $value
+     * @param string $value
      *   The value to associate with $key.
      *
      * @throws \CodeFoundation\FlowConfig\Exceptions\EntityKeyChangeException
      * @throws \CodeFoundation\FlowConfig\Exceptions\ValueSetException
      */
-    public function set(string $key, $value): void
+    public function set(string $key, string $value): void
     {
         if ($this->accessControl->canSetKey($key) === false) {
             throw new ValueSetException($key);

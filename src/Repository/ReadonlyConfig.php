@@ -57,9 +57,9 @@ class ReadonlyConfig implements ReadonlyConfigRepositoryInterface
      * Not implemented in this repository.
      *
      * @param string $key
-     * @param mixed $value
+     * @param string $value
      */
-    public function set(string $key, $value)
+    public function set(string $key, string $value): void
     {
         throw new \InvalidArgumentException('Setting values is not possible in this repository.');
     }
