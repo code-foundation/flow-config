@@ -177,6 +177,7 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
             $criteria['entityId'] = $entity->getEntityId();
         }
 
+        /** @var \CodeFoundation\FlowConfig\Entity\EntityConfigItem|null */
         return $this->configRepository->findOneBy($criteria);
     }
 }

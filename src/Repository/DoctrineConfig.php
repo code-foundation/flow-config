@@ -145,7 +145,7 @@ class DoctrineConfig implements ConfigRepositoryInterface
      */
     protected function getConfigItem(string $key): ?ConfigItem
     {
-        /** @var ConfigItem|null */
+        /** @var \CodeFoundation\FlowConfig\Entity\ConfigItem|null */
         return $this->configRepository->findOneBy(['key' => $key]);
     }
 }
