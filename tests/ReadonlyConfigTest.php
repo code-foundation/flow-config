@@ -4,13 +4,14 @@ namespace CodeFoundation\FlowConfig\Tests;
 
 use CodeFoundation\FlowConfig\Interfaces\Repository\ReadonlyConfigRepositoryInterface;
 use CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
+use PHPStan\Testing\TestCase;
 
 /**
  * Tests for CodeFoundation\FlowConfig\Repository\ReadonlyConfig;
  *
  * @covers \CodeFoundation\FlowConfig\Repository\ReadonlyConfig
  */
-class ReadonlyConfigTest extends \PHPUnit\Framework\TestCase
+class ReadonlyConfigTest extends TestCase
 {
     /**
      * Test that basic get() against a known key works properly.
