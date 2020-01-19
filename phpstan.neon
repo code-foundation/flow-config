@@ -1,0 +1,4 @@
+parameters:
+    ignoreErrors:
+        - '#Method CodeFoundation\\FlowConfig\\Tests\\Stubs\\EntityManagerStub::(.*)\(\) should return (.*) but return statement is missing.#'
+
