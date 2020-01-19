@@ -41,13 +41,13 @@ class ReadonlyConfig implements ReadonlyConfigRepositoryInterface
      *
      * @param string $key
      *   Key of configuration item to look up.
-     * @param null $default
+     * @param string $default
      *   Value to return if $key is not found.
      *
      * @return mixed
      *   Configuration value if found, $default if not.
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, string $default = null)
     {
         if (array_key_exists($key, $this->data)) {
             return $this->data[$key];

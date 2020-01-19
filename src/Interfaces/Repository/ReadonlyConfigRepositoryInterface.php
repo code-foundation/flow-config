@@ -21,12 +21,12 @@ interface ReadonlyConfigRepositoryInterface
      *
      * @param string $key
      *   Configuration key string.
-     * @param mixed $default
+     * @param string $default
      *   Default to return if configuration key is not found. Default to null.
      *
      * @return mixed
      *   Returns the configuration item. If it is not found, the value specified
      *   in $default will be returned.
      */
-    public function get(string $key, $default = null);
+    public function get(string $key, string $default = null);
 }
