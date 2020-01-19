@@ -134,11 +134,11 @@ echo $cascadeConfig->getEntityConfigItem('timezone', $user2); // 'Australia/Melb
 ```
 
 # Supported platforms
-* PHP 7.1+
+* PHP 7.3+
 * Doctrine
+* Symfony - https://github.com/code-foundation/flow-config-symfony
 
 # Future plans
-* Symfony package
 * Validation
 * Allowed values
 * Factories
