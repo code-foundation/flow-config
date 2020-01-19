@@ -4,11 +4,8 @@ declare(strict_types=1);
 namespace CodeFoundation\FlowConfig\Tests\TestCases;
 
 use CodeFoundation\FlowConfig\Config\DoctrineEntityManagerBuilder;
-use Doctrine\Common\Persistence\Mapping\Driver\DefaultFileLocator;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Tools\Setup;
 use PHPUnit\Framework\TestCase;
 
 abstract class DatabaseTestCase extends TestCase
@@ -28,9 +25,9 @@ abstract class DatabaseTestCase extends TestCase
     /**
      * Build the a Doctrine Configuration map.
      *
-     * @return \Doctrine\ORM\EntityManager
+     * @return \Doctrine\ORM\EntityManagerInterface
      */
-    protected function getEntityManager(): EntityManager
+    protected function getEntityManager(): EntityManagerInterface
     {
         if ($this->entityManager === null) {
             $connection = ['driver' => 'pdo_sqlite', 'path'   => ':memory:'];
@@ -45,7 +42,7 @@ abstract class DatabaseTestCase extends TestCase
     /**
      * Create schema for passed in entities.
      *
-     * @param array $entities List of entity classe paths.
+     * @param string[] $entities List of entity classe paths.
      */
     private function buildSchema(array $entities): void
     {
