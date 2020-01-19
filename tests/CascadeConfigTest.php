@@ -97,7 +97,7 @@ class CascadeConfigTest extends DatabaseTestCase
      * Test that requesting a config value for an entity falls through to
      *  the system config.
      */
-    public function testEntityDefaultsAreHonoured()
+    public function testEntityDefaultsAreHonoured(): void
     {
         $expected = 'defaultvalueabc';
 
@@ -179,6 +179,9 @@ class CascadeConfigTest extends DatabaseTestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getEntityList(): array
     {
         return [EntityConfigItem::class, ConfigItem::class];

@@ -58,5 +58,10 @@ abstract class DatabaseTestCase extends TestCase
         $schemaTool->createSchema($classMetadataList);
     }
 
+    /**
+     * Get a list of object types to create in the database.
+     *
+     * @return string[]
+     */
     abstract protected function getEntityList(): array;
 }
