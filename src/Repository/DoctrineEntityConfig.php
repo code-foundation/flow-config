@@ -24,7 +24,7 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
     /**
      * The access control instance used to determine readability and writability of keys.
      *
-     * @var \CodeFoundation\FlowConfig\Interfaces\AccessControl\AccessControlInterface|null
+     * @var \CodeFoundation\FlowConfig\Interfaces\AccessControl\AccessControlInterface
      */
     private $accessControl;
 
