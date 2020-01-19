@@ -144,10 +144,8 @@ class DoctrineEntityConfig implements EntityConfigRepositoryInterface
             $configItem->setKey($key);
             $configItem->setValue($value);
 
-            if (($entity instanceof EntityIdentifier) === true) {
-                $configItem->setEntityId($entity->getEntityId());
-                $configItem->setEntityType($entity->getEntityType());
-            }
+            $configItem->setEntityId($entity->getEntityId());
+            $configItem->setEntityType($entity->getEntityType());
         }
 
         $configItem->setValue($value);
